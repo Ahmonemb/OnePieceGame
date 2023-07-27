@@ -225,7 +225,7 @@ function MobClass:Movement()
 							end)
 							self.Model:SetAttribute("Walking",nil)
 							task.wait(3)
-							print("moving again")
+							print("Moving")
 						else
 							self.Torso.BodyVelocity.Velocity = Vector3.new(0,-30,0)
 							self.Model:SetAttribute("Walking",nil)
