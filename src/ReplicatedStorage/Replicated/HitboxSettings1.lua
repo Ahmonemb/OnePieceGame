@@ -37,6 +37,7 @@ function HitboxSettings.new(plr,HitboxSize)
 end
 
 function HitboxSettings:Attack()
+
 	if self.PunchDebounce == false then
 	
 	for i,v in pairs(Stuns) do
@@ -48,8 +49,8 @@ function HitboxSettings:Attack()
 		
 		self.PunchDebounce = true
 		if self.Combo ~= 4 then
-		task.delay(self.HitDelay,function()
-			self.PunchDebounce = false
+			task.delay(self.HitDelay,function()
+				self.PunchDebounce = false
 			end)
 		elseif self.Combo == 5 and self.LastCooldown == true then
 			task.delay(self.LastCooldownTime,function()
@@ -57,7 +58,11 @@ function HitboxSettings:Attack()
 			end)
 		end
 		
-		self.Combo += 1
+
+		if not self.Character.HumanoidRootPart:FindFirstChild("SendUp") then
+			self.Combo += 1
+		end
+		
 		
 		if self.Combo == 1 then
 			AttackEvent:FireServer("Animation",self.Animation1)
@@ -76,6 +81,7 @@ function HitboxSettings:Attack()
 		end
 		
 		if self.Combo == 5 then
+			print("last")
 			AttackEvent:FireServer("Animation",self.Animation5)
 			task.delay(self.HitWait,function()
 				if self.AirCombo == true then
@@ -98,14 +104,18 @@ function HitboxSettings:Attack()
 			elseif  self.Combo == 4 then
 				if self.SpaceHold == false then
 					AttackEvent:FireServer("Hitbox",nil,Assets.Animations.FightingStyles.Combat:WaitForChild("RightHit"),5,self.HSize,false,false)
-				elseif self.AirCombo == false then
+				elseif self.AirCombo == false and self.SpaceHold == true then
 					AttackEvent:FireServer("Hitbox",nil,Assets.Animations.FightingStyles.Combat:WaitForChild("RightHit"),5,self.HSize,false,true)
 					self.AirCombo = true
-					self.Character:SetAttribute("InAir", true)
+					self.Character.Cooldowns:SetAttribute("InAir", true)
+					
+					task.wait(0.38)
 					self.Combo = 0
+					self.PunchDebounce = false
+
 					task.delay(4,function()
 						self.AirCombo = false
-						self.Character:SetAttribute("InAir", false)
+						self.Character.Cooldowns:SetAttribute("InAir", false)
 					end)
 				else
 					AttackEvent:FireServer("Hitbox",nil,Assets.Animations.FightingStyles.Combat:WaitForChild("RightHit"),5,self.HSize,false,false)
@@ -114,20 +124,20 @@ function HitboxSettings:Attack()
 			
 		end)
 
-		
 		local function reset()
 			if self.Combo >= self.MaxCombo then
 				self.Combo = 0
+				print("0")
 				task.delay(self.LastCooldownTime,function()
 					self.PunchDebounce = false
 				end)
 			end
 		end
 		
-		
 		local function reset2()
 			if self.Combo >= self.MaxCombo then
 				self.Combo = 0
+				print("1")
 				task.delay(self.HitDelay,function()
 					self.PunchDebounce = false
 				end)
@@ -137,17 +147,21 @@ function HitboxSettings:Attack()
 		local function reset3()
 			local Combo = self.Combo
 			task.delay(self.ResetTime,function()
-				if Combo == self.Combo then
+				if Combo == self.Combo and not self.Character.HumanoidRootPart:FindFirstChild("HoldBP") then
 					self.Combo = 0
+					print("2")
 				end
 			end)
 		end
 		
 		reset3()
+		
 		if self.LastCooldown == true then
 			reset()
+			print("3")
 		else
 			reset2()
+			print("4")
 		end
 	end
 end
