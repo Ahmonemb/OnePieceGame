@@ -11,7 +11,6 @@ local GlobalFunctions = require(game.ReplicatedStorage.Modules.GlobalFunctions)
 local StateHandler = require(script.Parent.Parent.Parent.Handlers.StateHandler)
 local MobClass = {}
 MobClass.__index = MobClass
-local MobFolder = game.ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Mobs")
 --/Remotes 
 local MobAnimationRemote = game.ReplicatedStorage.Remotes.Misc.MobAnimation
 local MobSpawn = game.ReplicatedStorage.Remotes.Misc.MobSpawn
@@ -22,21 +21,19 @@ local COMBO_TIME_WINDOW = 0.8
 
 --/TODO: Create a new mob
 function MobClass.new(Type,Count)
-	local Mob1 = MobFolder:WaitForChild("Bandit") 
 	local Mob = {} 
 	local MobData = Information[Type]
 	setmetatable(Mob,MobClass)
 
 	Mob.Name = string.format("%s_%d",Type,Count)
-	print(Mob.Name)
 	--[[Creating the Model and Torso]]--
 	local Model = Instance.new("Model")
 	Model.Name = Mob.Name 
 
 	local Torso = Instance.new("Part")
-	Torso.Transparency = 1 Torso.CanCollide = true
+	Torso.Transparency = 1 Torso.CanCollide = false
 	Torso.Name = "PseudoTorso" Torso.Anchored = false 
-	Torso.Massless = true
+	Torso.Massless = false
 	Torso.Size = Vector3.new(2,2,1) 
 	Torso.Position = GlobalFunctions.rayCast(MobData.SpawnArea,Vector3.new(0,-30,0),{Model}).Position+Vector3.new(math.random(-25,25),2.9,math.random(-25,25)) --MobData.SpawnArea+Vector3.new(math.random(-25,25),0,math.random(-25,25))
 	Torso.Parent = Model 
@@ -115,7 +112,7 @@ end
 
 --/TODO: Find nearest dude
 local function FindNearestPlayer(self)
-	for i,v in pairs(workspace:GetChildren()) do
+	for _,v in pairs(workspace:GetChildren()) do
 		if Players:GetPlayerFromCharacter(v) and (v.HumanoidRootPart.Position-self.Torso.Position).magnitude <= self.FollowRange then 
 			self.Target = v
 		end
@@ -142,7 +139,7 @@ function MobClass:Attack()
 		if Player then
 			MobAnimationRemote:FireClient(Player,self.Name,"Combat","Combo"..self.ComboStage)
 		end
-		wait(0.15)
+		task.wait(0.15)
 		CombatModule.Melee(self)
 	end
 end
@@ -179,90 +176,95 @@ function MobClass:Movement()
 				FindNearestPlayer(self)
 			end
 
-			if self.Target and self.Target.Humanoid.Health > 0 then				
+			if self.Target and self.Target.Humanoid.Health > 0 then
 				local Distance = (self.Target.HumanoidRootPart.Position-self.Torso.Position).magnitude 
 				if Distance <= self.FollowRange then 
 
-					local Speed = (Distance > self.FollowRange-5 and .0001 or .1)
 					local HipHeight = GlobalFunctions.rayCast(self.Torso.Position,Vector3.new(0,-4.5,0),{self.Target,self.Model})
 
-					if HipHeight and not self.Model.Cooldowns:FindFirstChild("Attacked") then 
-						--local TargetCFrame = CFrame.new(self.Target.HumanoidRootPart.CFrame.X,HipHeight.Position.Y+3,self.Target.HumanoidRootPart.CFrame.Z)
-						--self.Torso.CFrame = self.Torso.CFrame:Lerp(TargetCFrame,Speed)
-						--self.Torso.CFrame = TargetCFrame
-
-						--self.Torso.Anchored = false
-
-
+					if HipHeight and not self.Model.Cooldowns:FindFirstChild("Attacked") and not self.Model.States:FindFirstChild("Lerping") then 
+						
 						local Position = HipHeight.Position+Vector3.new(0,2.9,0)
 						local TargetPosition = self.Target.HumanoidRootPart.Position 
 						local TargetCFrame = CFrame.new(Position,Vector3.new(TargetPosition.X,Position.Y,TargetPosition.Z))
-
+						
 						self.Torso.CFrame = self.Torso.CFrame:Lerp(TargetCFrame,0.19000005722046)
-
 						self.Torso.BodyGyro.CFrame = TargetCFrame
 						self.Torso.BodyVelocity.Velocity = TargetCFrame.LookVector*self.WalkSpeed
 
 						self.Model:SetAttribute("Walking",true)
 					else
-						--self.Torso.CFrame = self.Torso.CFrame:Lerp(self.Torso.CFrame*CFrame.new(0,-3,0),Speed)
-						if self.Model.Cooldowns:FindFirstChild("Attacked") and self.Target.States.Combo.Value < 5 then
-							self.Torso.BodyVelocity.Velocity = self.Target.HumanoidRootPart.CFrame.LookVector * 7 --+ Vector3.new(0,-30,0)
+						if self.Model.Cooldowns:FindFirstChild("Attacked") and self.Target.States.Combo.Value < 5 and not self.Model.States:FindFirstChild("M1KB") then
+							print("m1")
+							self.Torso.BodyVelocity.Velocity = self.Target.HumanoidRootPart.CFrame.LookVector * 7 
 							self.Model:SetAttribute("Walking",nil)
+							task.wait()
 						elseif self.Model.Cooldowns:FindFirstChild("Attacked") and self.Target.States.Combo.Value == 5 then
-							self.Torso.BodyVelocity.Velocity = self.Target.HumanoidRootPart.CFrame.LookVector * 50 --+ Vector3.new(0,-30,0)
+							print("knockback")
+							self.Torso.BodyVelocity.Velocity = self.Target.HumanoidRootPart.CFrame.LookVector * 40 
 							self.Model:SetAttribute("Walking",nil)
-						elseif self.Model.Cooldowns:FindFirstChild("Attacked") and self.Target.States.Combo.Value == 6 then
-							self.Torso.BodyVelocity.Velocity = self.Target.HumanoidRootPart.CFrame.UpVector * 28 --+ Vector3.new(0,-30,0)
-							task.wait(.4)
+							task.wait()
+						elseif self.Model.Cooldowns:FindFirstChild("Attacked") and self.Target.States.Combo.Value == 6 and not self.Model.States:FindFirstChild("SendUp") then
+							print("sendup")
+							local SendUp = Instance.new("BoolValue", self.Model.States)
+							SendUp.Name = "SendUp"
+							SendUp.Parent = self.Model.States
+							
+							self.Torso.BodyVelocity.Velocity = self.Target.HumanoidRootPart.CFrame.UpVector * 33
+							task.delay(.4, function()
+								self.Torso.BodyVelocity.Velocity = Vector3.new()
+							end)
 							task.delay(.5,function()
 								local BP = Instance.new("BodyPosition",self.Torso)
 								BP.Position = self.Torso.Position
 								BP.MaxForce = Vector3.new(200000,200000,200000)
 								BP.P = 400
 								BP.Name = "HoldBP"
-								game.Debris:AddItem(BP,3)
+								task.delay(3, function()
+									BP:Destroy()
+								end)
+								print("holding")
 							end)
+							
+							task.wait(3.53255529981)
 							self.Model:SetAttribute("Walking",nil)
-							task.wait(3)
-							print("Moving")
+							SendUp:Destroy()
+						elseif self.Model.States:FindFirstChild("Lerping") and self.Target.States.Combo.Value == 7 then
+							if self.Torso:FindFirstChild("HoldBP") then
+								self.Torso:FindFirstChild("HoldBP"):Destroy()
+							end
+							print("5")
+							self.Torso.BodyVelocity.Velocity = Vector3.new(0,0,0)
+							self.Model:SetAttribute("Walking",nil)
 						else
+							print("6")
 							self.Torso.BodyVelocity.Velocity = Vector3.new(0,-30,0)
 							self.Model:SetAttribute("Walking",nil)
 						end
 					end
 
-					--Torso.CFrame = Torso.CFrame * CFrame.new(0, 0, -(self.WalkspeedPerSecond/30)/2)	
 
 					--/TODO: Combat Prox Check 
-					if Distance <= self.CombatRange then 
+					if Distance <= self.CombatRange and not self.Model.Cooldowns:FindFirstChild("Attacked") then
+						self.Torso.BodyVelocity.Velocity = Vector3.new()
+						self.Model:SetAttribute("Walking",nil)
 						self:Attack()
 					end
 
-					--TweenService:Create(self.Torso,TweenInfo.new((Distance > 10 and 1 or .4)),{CFrame = CFrame.lookAt(CFrame.new(self.Target.Torso.CFrame.X,2,self.Target.Torso.CFrame.Z).Position,self.Target.Torso.Position)}):Play()
 				else 
 					self.Target = nil 
 					self.Torso.BodyVelocity.Velocity = Vector3.new()
 					self.Model:SetAttribute("Walking",nil)
-					--[[
-					if self.Torso.BodyVelocity.Velocity.Magnitude > Vector3.new(0,0,0).Magnitude then
-						print'reset'
-						--self.Torso.BodyVelocity.Velocity = Vector3.new(0,0,0)
-					end
-					]]
-					--self.Torso.Anchored = true
-					--self.Torso.BodyGyro.CFrame = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+					
 				end
 			else
 				self.Target = nil
 				self.Torso.BodyVelocity.Velocity = Vector3.new()
 				self.Model:SetAttribute("Walking",nil)
-				--self.Torso.Anchored = true
-				--self.Torso.BodyGyro.CFrame = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+				
 			end
 			task.wait()
 		end
-
 		self.Torso.BodyVelocity.Velocity = Vector3.new()
 		self.Model:SetAttribute("Walking",nil)
 		self:Respawn()

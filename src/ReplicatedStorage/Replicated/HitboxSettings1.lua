@@ -81,7 +81,6 @@ function HitboxSettings:Attack()
 		end
 		
 		if self.Combo == 5 then
-			print("last")
 			AttackEvent:FireServer("Animation",self.Animation5)
 			task.delay(self.HitWait,function()
 				if self.AirCombo == true then
@@ -109,7 +108,7 @@ function HitboxSettings:Attack()
 					self.AirCombo = true
 					self.Character.Cooldowns:SetAttribute("InAir", true)
 					
-					task.wait(0.38)
+					task.wait(0.37)
 					self.Combo = 0
 					self.PunchDebounce = false
 
@@ -127,7 +126,6 @@ function HitboxSettings:Attack()
 		local function reset()
 			if self.Combo >= self.MaxCombo then
 				self.Combo = 0
-				print("0")
 				task.delay(self.LastCooldownTime,function()
 					self.PunchDebounce = false
 				end)
@@ -137,7 +135,6 @@ function HitboxSettings:Attack()
 		local function reset2()
 			if self.Combo >= self.MaxCombo then
 				self.Combo = 0
-				print("1")
 				task.delay(self.HitDelay,function()
 					self.PunchDebounce = false
 				end)
@@ -149,7 +146,6 @@ function HitboxSettings:Attack()
 			task.delay(self.ResetTime,function()
 				if Combo == self.Combo and not self.Character.HumanoidRootPart:FindFirstChild("HoldBP") then
 					self.Combo = 0
-					print("2")
 				end
 			end)
 		end
@@ -158,10 +154,8 @@ function HitboxSettings:Attack()
 		
 		if self.LastCooldown == true then
 			reset()
-			print("3")
 		else
 			reset2()
-			print("4")
 		end
 	end
 end

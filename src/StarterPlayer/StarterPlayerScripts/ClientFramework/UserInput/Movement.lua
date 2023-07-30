@@ -1,6 +1,7 @@
 --/Services
 local userInputService = game:GetService("UserInputService")
 local collectionService = game:GetService("CollectionService")
+local attackData = require(game.ReplicatedStorage.Modules.Manager.AttackData)
 
 --/Modules
 local G = require(game.ReplicatedStorage.Modules.GlobalFunctions)
@@ -21,6 +22,10 @@ local module = {
 	
 	["Space"] = function(p)
 		local c = p.Character
+		local staminaData = attackData.getData("Bomb","NoseCannon")
+
+		if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
+		
 		if (c.Humanoid.FloorMaterial == Enum.Material.Air) then
 			c.Cooldowns:SetAttribute("InAir",true)
 		else

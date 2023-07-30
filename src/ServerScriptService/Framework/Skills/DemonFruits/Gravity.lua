@@ -12,6 +12,8 @@ local damageModule = require(frameWork.Misc.Damage)
 local dataStore = require(frameWork.Systems.Datastore)
 local bezierCurve = require(game.ReplicatedStorage.Modules.Misc.BezierCurves)
 local hitDetection = require(game.ReplicatedStorage.Modules.Misc.HitDetection)
+local staminaHandler = require(frameWork.Handlers.StaminaHandler)
+
 local module = {}
 
 --/Variables
@@ -45,13 +47,14 @@ function module.Move1(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Gravity Push"
+	local skillName = "GravityPush"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Gravity",skillName)
+	staminaHandler.checkStamina(c,"Gravity",skillName)
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 200, {Character = c, Function = "Move1"})
 	local RootStartCFrame = c.HumanoidRootPart.CFrame
@@ -82,13 +85,14 @@ function module.Move2(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Infinite Gravity"
+	local skillName = "InfiniteGravity"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Gravity",skillName)
+	staminaHandler.checkStamina(c,"Bomb",skillName)
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 200, {Character = c, Function = "Move2"})
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 30, {Character = c, Function = "Screen"})
@@ -121,12 +125,16 @@ function module.Move3(p, chargeUp)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Move3"
+	local skillName = "GravityFlight"
+	if chargeUp ~= "Release" then
+		if cooldowns:GetAttribute(skillName) then return end
+		cooldownHandler.addCooldown(c,"Gravity",skillName)
+		staminaHandler.checkStamina(c,"Bomb",skillName)
 
-	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	end
+	
 
-	if chargeUp then
+	if chargeUp and chargeUp ~= "Release" then
 		collectionService:AddTag(c,"GravityFlight")
 		
 		local flatrock = VFXEffects.Mesh.flatrock:Clone()
@@ -159,12 +167,15 @@ function module.Move3(p, chargeUp)
 		return
 	end
 	
-	for _,v in ipairs(c:GetChildren()) do
-		if v.Name == "flatrock" then
-			v:Destroy()
+	if collectionService:HasTag(c, "GravityFlight") then
+		for _,v in ipairs(c:GetChildren()) do
+			if v.Name == "flatrock" then
+				v:Destroy()
+			end
 		end
+		collectionService:RemoveTag(c,"GravityFlight")
 	end
-	collectionService:RemoveTag(c,"GravityFlight")
+	
 end
 
 --/TODO: MOVE DESCRIPTION
@@ -180,7 +191,8 @@ function module.Move4(p)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Gravity",skillName)
+	staminaHandler.checkStamina(c,"Bomb",skillName)
 	
 	local Offset = 100
 	if math.random(1,2) == 1 then

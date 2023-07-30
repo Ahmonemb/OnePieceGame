@@ -12,7 +12,7 @@ local Invites = {}
 
 --/TODO: Load mastery onto the folder
 function module.LoadMastery(Player)
-	wait(1)
+	task.wait(1)
 	local MasteryData = Datastore.GetData(Player,"Mastery")
 	Remote:FireClient(Player,MasteryData,"Load")
 end
@@ -30,7 +30,7 @@ function module.UpdateMastery(Player)
 end
 
 --//SERVER METHODS\\--
-function MasteryLevelUp(Player,Ability)
+function module.MasteryLevelUp(Player,Ability)
 	local MasteryData = Datastore.GetData(Player,"Mastery")
 	if MasteryData[Ability] then 
 		local Mastery = MasteryData[Ability]
@@ -39,7 +39,7 @@ function MasteryLevelUp(Player,Ability)
 			Mastery.Level += 1 
 			Mastery.Experience = Difference 
 			Mastery.MaxExperience += 50
-			MasteryLevelUp(Player,Ability)
+			module.MasteryLevelUp(Player,Ability)
 		end
 	end
 end
@@ -56,7 +56,7 @@ function module.IncreaseMastery(Player,Ability,Amount)
 	if MasteryData[Ability] then 
 		local Mastery = MasteryData[Ability]
 		Mastery.Experience += Amount 
-		MasteryLevelUp(Player,Ability)
+		module.MasteryLevelUp(Player,Ability)
 		module.UpdateMastery(Player)
 	end
 end

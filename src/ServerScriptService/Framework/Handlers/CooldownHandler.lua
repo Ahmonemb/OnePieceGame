@@ -13,14 +13,14 @@ function module.addCooldown(c,moduleName,skill,time)
 	if cooldownData then
 		c.Cooldowns:SetAttribute(skill,true)
 		coroutine.wrap(function()
-			wait(time or cooldownData.cooldown)
+			task.wait(time or cooldownData.cooldown)
 			c.Cooldowns:SetAttribute(skill,nil)
 		end)()
 	else 
 		if not skill then return end
 		c.Cooldowns:SetAttribute(skill,true)
 		coroutine.wrap(function()
-			wait(time)
+			task.wait(time)
 			c.Cooldowns:SetAttribute(skill,nil)
 		end)()
 	end

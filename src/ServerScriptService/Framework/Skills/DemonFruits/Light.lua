@@ -12,6 +12,8 @@ local damageModule = require(frameWork.Misc.Damage)
 local dataStore = require(frameWork.Systems.Datastore)
 local bezierCurve = require(game.ReplicatedStorage.Modules.Misc.BezierCurves)
 local hitDetection = require(game.ReplicatedStorage.Modules.Misc.HitDetection)
+local staminaHandler = require(frameWork.Handlers.StaminaHandler)
+
 local module = {}
 
 --/Variables
@@ -65,6 +67,7 @@ function module.Melee(p)
 	if cooldowns:GetAttribute(skillName) then return end
 
 	cooldownHandler.addCooldown(c,script.Name, skillName,COMBO_CD)
+	staminaHandler.checkStamina(c,"Light",skillName)
 
 	if not count[p.Name] then
 		count[p.Name] = 1
@@ -113,13 +116,15 @@ function module.Move1(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 	
-	local skillName = "Light Kick"
+	local skillName = "LightKick"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Light",skillName)
+	staminaHandler.checkStamina(c,"Light",skillName)
+
 
 	local projectileCFrame = CFrame.lookAt(c.HumanoidRootPart.CFrame*CFrame.new(0,0,-1).Position, mousePos)
 	local points = hitDetection:GetPoints(projectileCFrame,5,5)
@@ -157,13 +162,14 @@ function module.Move2(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Light Mirror"
+	local skillName = "LightMirror"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Light",skillName)
+	staminaHandler.checkStamina(c,"Light",skillName)
 	
 	--[[ Raycast ]]--
 	local Root = c.HumanoidRootPart
@@ -224,15 +230,16 @@ function module.Move3(p, chargeUp)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Move3"
+	local skillName = "LightFlight"
 
-	--local skillData = attackData.getData(script.Name,skillName)
-	--local damage = skillData.baseDamage + dataStore.Get(p,"Fruit")
-	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	if chargeUp ~= "Release" then
+		if cooldowns:GetAttribute(skillName) then return end
+		cooldownHandler.addCooldown(c,"Light",skillName)
+		staminaHandler.checkStamina(c,"Light",skillName)
+	end
 
-	if chargeUp then
-		collectionService:AddTag(c,"PikaFlight")
+	if chargeUp and chargeUp ~= "Release" then
+		collectionService:AddTag(c,"LightFlight")
 		
 		
 		for _,v in ipairs(script.ParticleAttachment:GetChildren()) do
@@ -251,21 +258,22 @@ function module.Move3(p, chargeUp)
 		SharedFunctions:FireAllDistanceClients(c, script.Name, 1000, {States = states, Character = c, Function = "Move3"})
 		return
 	end
-
-	for _,v in ipairs(c.Torso.WaistCenterAttachment:GetChildren()) do
-		if v.Name == "Rays" or v.Name == "Spark" or v.Name == "Star" or v.Name == "Wave" then
-			v.Enabled = false
-			v:Emit(2)
-			v:Destroy()
+	if collectionService:HasTag(c, "LightFlight") then
+		for _,v in ipairs(c.Torso.WaistCenterAttachment:GetChildren()) do
+			if v.Name == "Rays" or v.Name == "Spark" or v.Name == "Star" or v.Name == "Wave" then
+				v.Enabled = false
+				v:Emit(2)
+				v:Destroy()
+			end
 		end
-	end
 
-	for _, v in ipairs(c:GetDescendants()) do
-		if (v.Name ~= "HumanoidRootPart") and (v:IsA("MeshPart") or v:IsA("BasePart")) then
-			v.Transparency = 0
+		for _, v in ipairs(c:GetDescendants()) do
+			if (v.Name ~= "HumanoidRootPart") and (v:IsA("MeshPart") or v:IsA("BasePart")) then
+				v.Transparency = 0
+			end
 		end
+		collectionService:RemoveTag(c,"LightFlight")
 	end
-	collectionService:RemoveTag(c,"PikaFlight")
 end
 
 --/TODO: MOVE DESCRIPTION
@@ -275,13 +283,14 @@ function module.Move4(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Move4"
+	local skillName = "LightJewels"
 
 	local _ = (c.HumanoidRootPart:FindFirstChild("PikaJewelsHold") and c.HumanoidRootPart:FindFirstChild("PikaJewelsHold"):Destroy())
 	--local skillData = attackData.getData(script.Name,skillName)
 	--local damage = skillData.baseDamage + dataStore.Get(p,"Fruit")
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Light",skillName)
+	staminaHandler.checkStamina(c,"Light",skillName)
 
 
 	--SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move4"})
@@ -293,14 +302,15 @@ function module.JewelsHold(p)
 	local cooldowns = c.Cooldowns
 	local states = c.States
 
-	local skillName = "Light Jewels"
+	local skillName = "LightJewels"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Light",skillName)
+	staminaHandler.checkStamina(c,"Light",skillName)
 	
 	local Val = Instance.new("BoolValue")
 	Val.Name = "PikaJewelsHold"

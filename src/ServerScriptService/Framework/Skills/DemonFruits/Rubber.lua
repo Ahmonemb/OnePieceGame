@@ -13,6 +13,8 @@ local dataStore = require(frameWork.Systems.Datastore)
 local bezierCurve = require(game.ReplicatedStorage.Modules.Misc.BezierCurves)
 local hitDetection = require(game.ReplicatedStorage.Modules.Misc.HitDetection)
 local masteryHandler = require(frameWork.Handlers.MasteryHandler)
+local staminaHandler = require(frameWork.Handlers.StaminaHandler)
+
 local module = {}
 
 --/Variables
@@ -36,13 +38,14 @@ function module.Move1(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Rubber Pistol"
+	local skillName = "RubberPistol"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,script.Name,skillName)
+	staminaHandler.checkStamina(c,"Rubber",skillName)
 	
 	
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move1"})
@@ -73,13 +76,15 @@ function module.Move2(p,chargeUp)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Rubber Bazooka"
+	local skillName = "RubberBazooka"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,script.Name,skillName)
+	staminaHandler.checkStamina(c,"Rubber",skillName)
+
 
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move2"})
@@ -110,18 +115,19 @@ function module.Move3(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Rubber Axe Stamp"
+	local skillName = "RubberAxeStamp"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,script.Name,skillName)
+	staminaHandler.checkStamina(c,"Rubber",skillName)
 
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move3"})
 	
-	wait(0.5)
+	task.wait(0.5)
 	--/Damage
 	local hitPoint = c.HumanoidRootPart.Position
 	if hitPoint then
@@ -144,13 +150,14 @@ function module.Move4(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Rubber Gattling"
+	local skillName = "RubberGattling"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,script.Name,skillName)
+	staminaHandler.checkStamina(c,"Rubber",skillName)
 
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move4"})
@@ -169,7 +176,7 @@ function module.Move4(p)
 				end
 			end
 		end
-		wait(0.1)
+		task.wait(0.1)
 	end
 end
 

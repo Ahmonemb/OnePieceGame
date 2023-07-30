@@ -12,6 +12,7 @@ local damageModule = require(frameWork.Misc.Damage)
 local dataStore = require(frameWork.Systems.Datastore)
 local bezierCurve = require(game.ReplicatedStorage.Modules.Misc.BezierCurves)
 local hitDetection = require(game.ReplicatedStorage.Modules.Misc.HitDetection)
+local staminaHandler = require(frameWork.Handlers.StaminaHandler)
 local module = {}
 
 --/Variables
@@ -45,13 +46,14 @@ function module.Move1(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Nose Cannon"
+	local skillName = "NoseCannon"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Bomb",skillName)
+	staminaHandler.checkStamina(c,"Bomb",skillName)
 
 	local projectileCFrame = CFrame.lookAt(c.HumanoidRootPart.CFrame*CFrame.new(0,0,-1).Position, mousePos)
 	local points = hitDetection:GetPoints(projectileCFrame,5,5)
@@ -95,7 +97,9 @@ function module.Move2(p)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Bomb",skillName)
+	staminaHandler.checkStamina(c,"Bomb",skillName)
+
 
 	local Val = c:FindFirstChild("ExplosionPlant") or warn('does not exist')
 	local PlantCFrame = Val.Value	
@@ -127,12 +131,13 @@ function module.Move3(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Move3"
+	local skillName = "BombLeap"
 
 	--local skillData = attackData.getData(script.Name,skillName)
 	--local damage = skillData.baseDamage + dataStore.Get(p,"Fruit")
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Bomb",skillName)
+	staminaHandler.checkStamina(c,"Bomb",skillName)
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 200, {Character = c, Function = "Move3"})
 end
@@ -147,13 +152,14 @@ function module.Move4(p)
 	local _ = (c.HumanoidRootPart:FindFirstChild("ExplosionCharge") and c.HumanoidRootPart:FindFirstChild("ExplosionCharge"):Destroy())
 	
 
-	local skillName = "Self Detonate"
+	local skillName = "SelfDetonate"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Bomb",skillName)
+	staminaHandler.checkStamina(c,"Bomb",skillName)
 
 	
 	CameraRemote:FireClient(p, "CameraShake", {FirstText = 6, SecondText = 9})

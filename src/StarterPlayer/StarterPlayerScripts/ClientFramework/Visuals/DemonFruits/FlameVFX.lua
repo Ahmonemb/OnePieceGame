@@ -417,14 +417,16 @@ function module.Move3(Data)
 	--sound.Parent = Root
 	--sound:Play()
 
-	while collectionService:HasTag(Character,"FlameFlight") do
+	while collectionService:HasTag(Character,"FireFlight") do
 		bv.Velocity = Root.CFrame.lookVector*50
 		bg.CFrame = CFrame.new(Root.Position, mouse.Hit.Position)
-		wait()
+		task.wait()
 	end
 	--sound:Destroy()
+	
 	bg:Destroy() 
 	bv:Destroy()
+	print("destroyed")
 end
 
 

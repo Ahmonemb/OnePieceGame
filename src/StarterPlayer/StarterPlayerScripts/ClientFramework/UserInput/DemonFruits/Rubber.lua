@@ -1,6 +1,7 @@
 --/Services
 local userInputService = game:GetService("UserInputService")
 local collectionService = game:GetService("CollectionService")
+local attackData = require(game.ReplicatedStorage.Modules.Manager.AttackData)
 
 --/Modules
 local G = require(game.ReplicatedStorage.Modules.GlobalFunctions)
@@ -19,6 +20,9 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberPistol")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("RubberPistol") then return end
 			collectionService:AddTag(c,"Aim")
@@ -32,7 +36,10 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberPistol")
 
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
+			
 			if cooldowns:GetAttribute("RubberPistol") then return end
 			collectionService:RemoveTag(c,"Aim")
 
@@ -46,6 +53,9 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberBazooka")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("RubberBazooka") then return end
 			collectionService:AddTag(c,"Aim")
@@ -59,6 +69,9 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberBazooka")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("RubberBazooka") then return end
 			collectionService:RemoveTag(c,"Aim")
@@ -73,10 +86,13 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberAxeStamp")
 
-			if cooldowns:GetAttribute("RubberAxe") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
-			local anim = G.playAnim(c.Humanoid,"Rubber","RubberAxe",true)
+			if cooldowns:GetAttribute("RubberAxeStamp") then return end
+
+			local anim = G.playAnim(c.Humanoid,"Rubber","RubberAxeStamp",true)
 			anim.TimePosition = 0.1
 			anim:AdjustSpeed(0)
 
@@ -84,10 +100,13 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberAxeStamp")
 
-			if cooldowns:GetAttribute("RubberAxe") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
-			local anim = G.getAnim(c.Humanoid,"RubberAxe")
+			if cooldowns:GetAttribute("RubberAxeStamp") then return end
+
+			local anim = G.getAnim(c.Humanoid,"RubberAxeStamp")
 			anim:AdjustSpeed(1)
 
 			attackRemote:FireServer("Move3")
@@ -97,12 +116,15 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberGattling")
 
-			if cooldowns:GetAttribute("RubberGatling") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
+
+			if cooldowns:GetAttribute("RubberGattling") then return end
 			collectionService:AddTag(c,"Aim")
 			G.Aim(p,.3)
 
-			local anim = G.playAnim(c.Humanoid,"Rubber","RubberGatling",true)
+			local anim = G.playAnim(c.Humanoid,"Rubber","RubberGattling",true)
 			anim.TimePosition = 0.1
 			anim:AdjustSpeed(0)
 
@@ -110,11 +132,14 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Rubber","RubberGattling")
 
-			if cooldowns:GetAttribute("RubberGatling") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
+
+			if cooldowns:GetAttribute("RubberGattling") then return end
 			collectionService:RemoveTag(c,"Aim")
 
-			local anim = G.getAnim(c.Humanoid,"RubberGatling")
+			local anim = G.getAnim(c.Humanoid,"RubberGattling")
 			anim:AdjustSpeed(1)
 
 			attackRemote:FireServer("Move4")

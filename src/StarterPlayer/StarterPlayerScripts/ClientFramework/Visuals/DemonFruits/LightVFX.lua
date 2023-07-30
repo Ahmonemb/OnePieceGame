@@ -346,7 +346,7 @@ function module.Move3(Data)
 	--sound.Parent = Root
 	--sound:Play()
 
-	while collectionService:HasTag(Character,"PikaFlight") do
+	while collectionService:HasTag(Character,"LightFlight") do
 		bv.Velocity = Root.CFrame.lookVector*90
 		bg.CFrame = CFrame.new(Root.Position, mouse.Hit.Position)
 		wait()

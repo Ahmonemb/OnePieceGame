@@ -12,6 +12,8 @@ game.Players.PlayerAdded:Connect(function(Player)
 		Character:SetAttribute("Attacking", false)
 		Character:SetAttribute("InAir", false)
 		Character:SetAttribute("Dashing", false)
+		local combo = Instance.new("IntValue", Character.States)
+		combo.Name = "Combo"
 	end)
 end)
 

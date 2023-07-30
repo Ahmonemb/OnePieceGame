@@ -5,10 +5,9 @@ local runtime = game:GetService('RunService')
 script:WaitForChild('FootstepSounds').Parent = sounds
 local materials = sounds:WaitForChild('FootstepSounds')
 local plr = game.Players.LocalPlayer
-repeat wait() until plr.Character
+repeat task.wait() until plr.Character
 local char = plr.Character
-local hrp = char.HumanoidRootPart
-local hum = char.Humanoid
+local hum = char:WaitForChild("Humanoid")
 local walking
 
 hum.Running:connect(function(speed)

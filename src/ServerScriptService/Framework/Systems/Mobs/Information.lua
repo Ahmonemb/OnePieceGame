@@ -1,12 +1,12 @@
 return {
 	["Bandit"] = {
 		Damage = 5,
-		MaxHealth = 115,
+		MaxHealth = 1150,
 		SpawnArea = Vector3.new(-40.7, 3.1, -154.995),
-		Amount = 5,
+		Amount = 1,
 		WalkSpeed = 14,
 		FollowRange = 55,
-		CombatRange = 6,
+		CombatRange = 4,
 		RespawnTime = 6,
 		Data = {
 			Level = 5,
@@ -24,7 +24,7 @@ return {
 		Damage = 15,
 		MaxHealth = 350,
 		SpawnArea = Vector3.new(33.175, 3.894, -70.164),
-		Amount = 1,
+		Amount = 0,
 		WalkSpeed = 14,
 		FollowRange = 55,
 		CombatRange = 6,

@@ -5,7 +5,7 @@ local players = game:GetService("Players")
 
 --/Modules
 local G = require(game.ReplicatedStorage.Modules.GlobalFunctions)
-local template = require(script.Template)
+local template = require(script.PlayerStats)
 local LevelUp = require(script.LevelUp)
 local module = {}
 

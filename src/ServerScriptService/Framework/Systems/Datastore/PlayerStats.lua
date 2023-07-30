@@ -9,9 +9,9 @@ return {
 	["RaceAccessory"] = 1,
 	["Strength"] = 1,
 	["Defense"] = 1,
-	["Fruit"] = 150,
+	["Fruit"] = 1,
 	["Weapon"] = 1,
-	["EquippedWeapon"] = "Bomb",
+	["EquippedWeapon"] = "",
 	["Beli"] = 1500000,
 	["StatPoints"] = 50,
 	["Mastery"] = {
@@ -29,6 +29,6 @@ return {
 	["QuestProgress"] = 0,
 	["QuestTarget"] = "",
 	["QuestMax"] = 0,
-	["Inventory"] = {"Light","Flame","Gravity","Rubber"},
+	["Inventory"] = {"Bomb"},
 	["Bounty"] = 0,
 }

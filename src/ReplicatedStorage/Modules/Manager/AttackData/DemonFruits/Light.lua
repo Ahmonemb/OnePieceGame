@@ -5,29 +5,34 @@ return {
 	["Melee"] = {
 		baseDamage = 7,
 		cooldown = 1.5,
+		Stamina = 10,
 		physical = true,
 	},
-	["Light Kick"] = {
+	["LightKick"] = {
 		baseDamage = 15,
 		cooldown = 4,
+		Stamina = 15,
 		Key = "Z",
 		Mastery = 1
 	},
-	["Light Mirror"] = {
+	["LightMirror"] = {
 		baseDamage = 15,
 		cooldown = 6,
+		Stamina = 20,
 		Key = "X",
 		Mastery = 15
 	},
-	["Light Flight"] = {
+	["LightFlight"] = {
 		baseDamage = 15,
 		cooldown = 8,
+		Stamina = 25,
 		Key = "C",
 		Mastery = 35
 	},
-	["Light Jewels"] = {
+	["LightJewels"] = {
 		baseDamage = 15,
 		cooldown = 15,
+		Stamina = 30,
 		Key = "V",
 		Mastery = 60
 	},

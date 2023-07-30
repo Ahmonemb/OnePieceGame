@@ -1,25 +1,29 @@
 return {
-	["Gravity Push"] = {
-		cooldown = 1,
+	["GravityPush"] = {
+		cooldown = 5,
 		baseDamage = 15,
+		Stamina = 10,
 		Key = "Z",
 		Mastery = 1
 	},
-	["Infinite Gravity"] = {
-		cooldown = 1,
+	["InfiniteGravity"] = {
+		cooldown = 10,
 		baseDamage = 5,
+		Stamina = 15,
 		Key = "X",
 		Mastery = 15
 	},
-	["Rock Flight"] = {
-		cooldown = 1,
+	["GravityFlight"] = {
+		cooldown = 7,
 		baseDamage = 7,
+		Stamina = 20,
 		Key = "C",
 		Mastery = 30
 	},
 	["Meteor"] = {
-		cooldown = 1,
+		cooldown = 15,
 		baseDamage = 30,
+		Stamina = 25,
 		Key = "V",
 		Mastery = 60
 	},

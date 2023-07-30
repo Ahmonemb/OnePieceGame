@@ -8,6 +8,8 @@ local Assets = ReplicatedStorage.Assets
 local World = game.Workspace:WaitForChild("World")
 local Visual = World.Visual
 local Live = World.Live
+local Remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes").Misc.Stamina
+
 
 --/Initializers
 for i,v in pairs(script:GetDescendants()) do
@@ -25,6 +27,7 @@ _G.CamShake = require(game.ReplicatedStorage.Modules.Misc.CameraShaker).new(Enum
 end)
 _G.CamShake:Start()
 
+Remote:FireServer()
 
 --/Damage Indicator
 damageIndicator.OnClientEvent:connect(function(cframe,text)

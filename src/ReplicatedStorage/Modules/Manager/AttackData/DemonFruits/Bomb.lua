@@ -1,25 +1,29 @@
 return {
-	["Nose Cannon"] = {
-		cooldown = 1,
+	["NoseCannon"] = {
+		cooldown = 5,
 		baseDamage = 15,
+		Stamina = 10,
 		Key = "Z",
 		Mastery = 1
 	},
 	["Landmine"] = {
-		cooldown = 1,
+		cooldown = 10,
 		baseDamage = 25,
+		Stamina = 15,
 		Key = "X",
 		Mastery = 15
 	},
-	["Bomb Leap"] = {
-		cooldown = 1,
+	["BombLeap"] = {
+		cooldown = 3,
 		baseDamage = 7,
+		Stamina = 20,
 		Key = "C",
 		Mastery = 30
 	},
-	["Self Detonate"] = {
-		cooldown = 1,
+	["SelfDetonate"] = {
+		cooldown = 15,
 		baseDamage = 30,
+		Stamina = 25,
 		Key = "V",
 		Mastery = 60
 	},

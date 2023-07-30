@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local frameWork = script.Parent.Parent.Parent
 local G = require(game.ReplicatedStorage.Modules.GlobalFunctions)
 local cooldownHandler = require(frameWork.Handlers.CooldownHandler)
+local staminaHandler = require(frameWork.Handlers.StaminaHandler)
 local stateHandler = require(frameWork.Handlers.StateHandler)
 local attackData = require(game.ReplicatedStorage.Modules.Manager.AttackData)
 local damageModule = require(frameWork.Misc.Damage)
@@ -45,13 +46,14 @@ function module.Move1(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Fire Fist"
+	local skillName = "FireFist"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Flame",skillName)
+	staminaHandler.checkStamina(c,"Flame",skillName)
 
 	local projectileCFrame = CFrame.lookAt(c.HumanoidRootPart.CFrame*CFrame.new(0,0,-1).Position, mousePos)
 	local points = hitDetection:GetPoints(projectileCFrame,5,5)
@@ -89,13 +91,14 @@ function module.Move2(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Fire Pillar"
+	local skillName = "FirePillar"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 	
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Flame",skillName)
+	staminaHandler.checkStamina(c,"Flame",skillName)
 
 	SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move2"})
 	
@@ -124,13 +127,15 @@ function module.Move3(p, chargeUp)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Move3"
+	local skillName = "FireFlight"
+	if chargeUp ~= "Release" then
+		if cooldowns:GetAttribute(skillName) then return end
+		cooldownHandler.addCooldown(c,"Flame",skillName)
+		staminaHandler.checkStamina(c,"Flame",skillName)
+	end
 
-	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
-
-	if chargeUp then
-		collectionService:AddTag(c,"FlameFlight")
+	if chargeUp and chargeUp ~= "Release" then
+		collectionService:AddTag(c,"FireFlight")
 		
 		local charge = Assets.VFX.DemonFruits.Flame.FlameFlight.bodyFire:Clone()
 		charge.Enabled = true
@@ -142,15 +147,18 @@ function module.Move3(p, chargeUp)
 		SharedFunctions:FireAllDistanceClients(c, script.Name, 1000, {States = states, Character = c, Function = "Move3"})
 		return
 	end
-	
-	local charge = c.Torso.WaistCenterAttachment:FindFirstChild("bodyFire")
-	charge.Enabled = false
-	game.Debris:AddItem(charge,1)
 
-	c["Left Leg"].Transparency = 0
-	c["Right Leg"].Transparency = 0
+	if collectionService:HasTag(c, "FireFlight") then
+		local charge = c.Torso.WaistCenterAttachment:FindFirstChild("bodyFire")
+		charge.Enabled = false
+		game.Debris:AddItem(charge,1)
+
+		c["Left Leg"].Transparency = 0
+		c["Right Leg"].Transparency = 0
+		
+		collectionService:RemoveTag(c,"FireFlight")
+	end
 	
-	collectionService:RemoveTag(c,"FlameFlight")
 end
 
 
@@ -161,13 +169,14 @@ function module.Move4(p)
 	local states = c.States
 	local mousePos = getMouse:InvokeClient(p)
 
-	local skillName = "Move4"
+	local skillName = "FireFlies"
 
 	local _ = (c.HumanoidRootPart:FindFirstChild("FireFlyHold") and c.HumanoidRootPart:FindFirstChild("FireFlyHold"):Destroy())
 	--local skillData = attackData.getData(script.Name,skillName)
 	--local damage = skillData.baseDamage + dataStore.Get(p,"Fruit")
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Flame",skillName)
+	staminaHandler.checkStamina(c,"Flame",skillName)
 
 
 	--SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move4"})
@@ -179,20 +188,21 @@ function module.FireFlyHold(p)
 	local cooldowns = c.Cooldowns
 	local states = c.States
 
-	local skillName = "Fire Flies"
+	local skillName = "FireFlies"
 
 	local skillData = attackData.getData(script.Name,skillName)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,skillName)
+	cooldownHandler.addCooldown(c,"Flame",skillName)
+	staminaHandler.checkStamina(c,"Flame",skillName)
 
 	local Val = Instance.new("BoolValue")
 	Val.Name = "FireFlyHold"
 	Val.Parent = c.HumanoidRootPart
 
 	while c.HumanoidRootPart:FindFirstChild("FireFlyHold") do
-		spawn(function()
+		task.spawn(function()
 			local mousePos = getMouse:InvokeClient(p)
 			local projectileCFrame = CFrame.lookAt(c.HumanoidRootPart.CFrame*CFrame.new(0,0,-1).Position, mousePos + Vector3.new(math.random(-5,5),0,math.random(-5,5)))
 			local points = hitDetection:GetPoints(projectileCFrame,5,5)
@@ -220,7 +230,7 @@ function module.FireFlyHold(p)
 				end
 			end
 		end)
-		wait(0.1)
+		task.wait(0.1)
 	end	
 end
 

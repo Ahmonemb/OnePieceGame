@@ -5,6 +5,10 @@ local collectionService = game:GetService("CollectionService")
 local G = require(game.ReplicatedStorage.Modules.GlobalFunctions)
 local stateHandler = require(script.Parent.Parent.Handlers.StateHandler)
 local cooldownHandler = require(script.Parent.Parent.Handlers.CooldownHandler)
+local frameWork = script.Parent.Parent
+local staminaHandler = require(frameWork.Handlers.StaminaHandler)
+
+
 local module = {}
 
 --/Variables
@@ -19,7 +23,9 @@ function module.Geppo(p)
 	local cooldowns = c.Cooldowns
 	
 	if cooldowns:GetAttribute("Geppo") then return end
-	cooldownHandler.addCooldown(c,"Geppo")	
+	cooldownHandler.addCooldown(c,"Movement","Geppo")	
+	staminaHandler.checkStamina(c,"Movement","Geppo")
+
 	
 	local bv = Instance.new("BodyVelocity")
 	bv.MaxForce = Vector3.new(1,1,1)*1e5

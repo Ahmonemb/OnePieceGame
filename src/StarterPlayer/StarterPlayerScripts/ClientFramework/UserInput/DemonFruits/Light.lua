@@ -1,6 +1,7 @@
 --/Services
 local userInputService = game:GetService("UserInputService")
 local collectionService = game:GetService("CollectionService")
+local attackData = require(game.ReplicatedStorage.Modules.Manager.AttackData)
 
 --/Modules
 local G = require(game.ReplicatedStorage.Modules.GlobalFunctions)
@@ -47,6 +48,9 @@ local module = {
 			local c = p.Character
 			local cooldowns = c.Cooldowns
 			local states = c.States
+			local staminaData = attackData.getData("Light","Melee")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("Melee") then return end
 			if (os.clock()-states:GetAttribute("MeleeClicked")) > COMBO_TIME_WINDOW or stage >= MAX_COMBO then
@@ -56,7 +60,7 @@ local module = {
 			end
 
 			G.playAnim(c.Humanoid,"OneSwordStyle","Combo"..stage)
-			wait(0.15)
+			task.wait(0.15)
 			attackRemote:FireServer("Melee")
 		end,
 	};
@@ -65,6 +69,9 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightKick")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("LightKick") then return end
 			collectionService:AddTag(c,"Aim")
@@ -77,6 +84,9 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightKick")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("LightKick") then return end
 			collectionService:RemoveTag(c,"Aim")
@@ -92,6 +102,9 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightMirror")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("LightMirror") then return end
 			collectionService:AddTag(c,"Aim")
@@ -104,6 +117,9 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightMirror")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("LightMirror") then return end
 			collectionService:RemoveTag(c,"Aim")
@@ -119,22 +135,26 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightFlight")
 
-			if cooldowns:GetAttribute("PikaFlight") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
-			G.playAnim(c.Humanoid,"Flame","FlameFlight")
+			if cooldowns:GetAttribute("LightFlight") then return end
+
+			G.playAnim(c.Humanoid,"Light","LightFlight")
 
 			attackRemote:FireServer("Move3", true)
 		end,
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightFlight")
 
-			if cooldowns:GetAttribute("PikaFlight") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
-			G.stopAnim(c.Humanoid,"FlameFlight")
+			G.stopAnim(c.Humanoid,"LightFlight")
 
-			attackRemote:FireServer("Move3")
+			attackRemote:FireServer("Move3", "Release")
 		end,
 	},
 	
@@ -142,12 +162,15 @@ local module = {
 		["Held"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightJewels")
+
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
 			if cooldowns:GetAttribute("LightJewels") then return end
 			collectionService:AddTag(c,"Aim")
 			G.Aim(p,.3)
 
-			local anim = G.playAnim(c.Humanoid,"Bomb","SelfDetonation",true)
+			local anim = G.playAnim(c.Humanoid,"Light","LightJewels",true)
 			anim.TimePosition = 0.5
 			anim:AdjustSpeed(0)
 			
@@ -156,11 +179,14 @@ local module = {
 		["Release"] = function(p)
 			local c = p.Character
 			local cooldowns = c.Cooldowns
+			local staminaData = attackData.getData("Light","LightJewels")
 
-			if cooldowns:GetAttribute("LightJewels") then return end
+			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
+
+			
 			collectionService:RemoveTag(c,"Aim")
 
-			local anim = G.getAnim(c.Humanoid,"SelfDetonation")
+			local anim = G.getAnim(c.Humanoid,"LightJewels")
 			anim:AdjustSpeed(1)
 
 			attackRemote:FireServer("Move4")

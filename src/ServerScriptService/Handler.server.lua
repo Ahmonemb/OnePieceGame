@@ -180,11 +180,6 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 						end
 					end)
 
-					local BV = Instance.new("BodyVelocity",PseudoTorso)
-					BV.Velocity = HumRP.CFrame.LookVector * 10
-					BV.MaxForce = Vector3.new(15000,15000,15000)
-					game.Debris:AddItem(BV,.2)
-
 					local BV2 = Instance.new("BodyVelocity",HumRP)
 					BV2.Velocity = HumRP.CFrame.LookVector * 10
 					BV2.MaxForce = Vector3.new(15000,15000,15000)
@@ -236,11 +231,6 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 						end
 					end)
 
-					local BV = Instance.new("BodyVelocity",PseudoTorso)
-					BV.Velocity = HumRP.CFrame.LookVector * 10
-					BV.MaxForce = Vector3.new(15000,15000,15000)
-					game.Debris:AddItem(BV,.2)
-
 					local BV2 = Instance.new("BodyVelocity",HumRP)
 					BV2.Velocity = HumRP.CFrame.LookVector * 10
 					BV2.MaxForce = Vector3.new(15000,15000,15000)
@@ -256,7 +246,7 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 				local DmgCounter = Assets:WaitForChild("VFX"):WaitForChild("Combat"):WaitForChild("DmgCounter"):Clone()
 				DmgCounter.Parent = workspace
 				DmgCounter.Position = PseudoTorso.Position
-				DmgCounter.Counter.Number.Text = "-"..Damage
+				DmgCounter.Counter.Number.Text = Damage
 
 				local goal = {}
 				goal.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -292,23 +282,10 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 				if Last == false and Air == false then
 					
 					HumRP.Parent.States.Combo.Value = 1
-					
-					local BV = Instance.new("BodyVelocity",PseudoTorso)
-					BV.Velocity = HumRP.CFrame.LookVector * 10
-					BV.MaxForce = Vector3.new(15000,15000,15000)
-					BV.Name = "M1KB"
-					game.Debris:AddItem(BV,.2)
-					
-					
-
+				
 				elseif Last == true and Air == false then
 					
 					HumRP.Parent.States.Combo.Value = 5
-					
-					local BV = Instance.new("BodyVelocity",PseudoTorso)
-					BV.Velocity = HumRP.CFrame.LookVector * 50
-					BV.MaxForce = Vector3.new(55000,55000,55000)
-					game.Debris:AddItem(BV,.4)
 
 					local raycastParams = RaycastParams.new()
 					raycastParams.FilterType = Enum.RaycastFilterType.Exclude
@@ -360,44 +337,37 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 					
 					HumRP.Parent.States.Combo.Value = 6
 					
-					local BV = Instance.new("BodyVelocity",PseudoTorso)
-					BV.Velocity = HumRP.CFrame.UpVector * 30
-					BV.MaxForce = Vector3.new(55000,55000,55000)
-					game.Debris:AddItem(BV,.4)
-
+					
 					local BV2 = Instance.new("BodyVelocity",HumRP)
 					BV2.Velocity = HumRP.CFrame.UpVector * 30
 					BV2.MaxForce = Vector3.new(55000,55000,55000)
 					BV2.Name = "SendUp"
-					game.Debris:AddItem(BV2,.4)
-	
+					task.delay(.4, function()
+						BV2:Destroy()
+					end)
 
 					Values:CreateValue("BoolValue",Char.Cooldowns,"Using Move",false,.31)
 					Values:CreateValue("BoolValue",PseudoTorso.Parent.Cooldowns,"Attacked",false,.9)
 
 					task.delay(.5,function()
-						local BP = Instance.new("BodyPosition",PseudoTorso)
-						BP.Position = PseudoTorso.Position
-						BP.MaxForce = Vector3.new(200000,200000,200000)
-						BP.P = 400
-						BP.Name = "HoldBP"
-						game.Debris:AddItem(BP,3)
-
 						local BP2 = Instance.new("BodyPosition",HumRP)
 						BP2.Position = HumRP.Position
 						BP2.MaxForce = Vector3.new(200000,200000,200000)
 						BP2.P = 400
 						BP2.Name = "HoldBP"
-						game.Debris:AddItem(BP2,3)
+						task.delay(3.01709150011, function()
+							BP2:Destroy()
+						end)
 
 					end)
+					
 				end
 
 				--Sends opponent flying down and creates crater fx
 				if Air == true and Last == true then
-					
+
 					HumRP.Parent.States.Combo.Value = 7
-					
+										
 					local StartPos = (HumRP.CFrame.LookVector * 20) + HumRP.Position
 					local Direction = Vector3.new(0,-40,0)
 
@@ -409,6 +379,7 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 					local Raycast = workspace:Raycast(StartPos,Direction,RayParams)
 
 					if Raycast then
+						print(Raycast.Position, "pre")
 						if PseudoTorso:FindFirstChild("HoldBP") then
 							PseudoTorso:FindFirstChild("HoldBP"):Destroy()
 						end
@@ -422,7 +393,14 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 						end
 
 						task.spawn(function()
+							local Lerping = Instance.new("IntValue", PseudoTorso.Parent.States)
+							Lerping.Name = "Lerping"
+							Lerping.Parent = PseudoTorso.Parent.States
+							task.delay(1, function()
+								Lerping:Destroy()
+							end)
 							for i = 0,1,.03 do
+								print(Raycast.Position, "lerp")
 								local newpos = Lerp(i,PseudoTorso.Position,Raycast.Position + Vector3.new(0,3,0))
 								PseudoTorso.Parent:MoveTo(newpos)
 								task.wait()
@@ -509,10 +487,10 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 				end
 
 				damageModule.damageSNG(plr,PseudoTorso.Parent,Damage,nil)
-				print("damage ran")
 			end
 			
 			if Ehum and EhumRP and v.Parent ~= Char and table.find(HitTable,v.Parent) == nil and Char:FindFirstChild("Stun") == nil then
+				print("oh no")
 				local LookVector1 = (EhumRP.Position - HumRP.Position).unit
 				local LookVector2 = EhumRP.CFrame.LookVector
 				local DotProduct = math.acos(LookVector2:Dot(LookVector1))
@@ -601,7 +579,7 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 
 					local GB = Ehum:LoadAnimation(Assets:WaitForChild("Animations"):WaitForChild("GB"))
 					GB:Play()
-					delay(1.5,function()
+					task.delay(1.5,function()
 						GB:Stop()
 					end)
 
@@ -648,7 +626,7 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 					BV2.MaxForce = Vector3.new(15000,15000,15000)
 					game.Debris:AddItem(BV2,.2)
 
-					for i,v in pairs(BlockFX:GetChildren()) do
+					for _,v in pairs(BlockFX:GetChildren()) do
 						local EmitCount = v:GetAttribute("EmitCount")
 						if EmitCount then v:Emit(EmitCount) end
 					end
@@ -714,7 +692,7 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 				local DmgCounter = Assets:WaitForChild("VFX"):WaitForChild("Combat"):WaitForChild("DmgCounter"):Clone()
 				DmgCounter.Parent = workspace
 				DmgCounter.Position = EhumRP.Position
-				DmgCounter.Counter.Number.Text = "-"..Damage
+				DmgCounter.Counter.Number.Text = Damage
 
 				local goal = {}
 				goal.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -753,6 +731,7 @@ AttackEvent.OnServerEvent:Connect(function(plr,Type,A1,A2,Damage,size,Last,Air,B
 					game.Debris:AddItem(BV,.2)
 
 				elseif Last == true and Air == false then
+					
 					local BV = Instance.new("BodyVelocity",EhumRP)
 					BV.Velocity = HumRP.CFrame.LookVector * 50
 					BV.MaxForce = Vector3.new(55000,55000,55000)

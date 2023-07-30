@@ -1,25 +1,29 @@
 return {
-	["Rubber Pistol"] = {
-		cooldown = 1,
+	["RubberPistol"] = {
+		cooldown = 4,
 		baseDamage = 15,
+		Stamina = 10,
 		Key = "Z",
 		Mastery = 1
 	},
-	["Rubber Bazooka"] = {
-		cooldown = 1,
+	["RubberBazooka"] = {
+		cooldown = 6,
 		baseDamage = 15,
+		Stamina = 15,
 		Key = "X",
 		Mastery = 15
 	},
-	["Rubber Axe Stamp"] = {
-		cooldown = 1,
+	["RubberAxeStamp"] = {
+		cooldown = 8,
 		baseDamage = 15,
+		Stamina = 20,
 		Key = "C",
 		Mastery = 30
 	},
-	["Rubber Gattling"] = {
-		cooldown = 1,
+	["RubberGattling"] = {
+		cooldown = 12,
 		baseDamage = 15,
+		Stamina = 25,
 		Key = "V",
 		Mastery = 50
 	},
