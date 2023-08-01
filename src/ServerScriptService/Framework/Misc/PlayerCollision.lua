@@ -1,5 +1,4 @@
 local PhysicsService = game:GetService("PhysicsService")
-local Players = game:GetService("Players")
 
 local module = {}
 
@@ -26,10 +25,14 @@ end
 
 local function resetCollisionGroup(object)
 	local previousCollisionGroupId = previousCollisionGroups[object]
-	if not previousCollisionGroupId then return end	
+	if not previousCollisionGroupId then
+		return
+	end
 
 	local previousCollisionGroupName = previousCollisionGroupId.CollisionGroup.Name
-	if not previousCollisionGroupName then return end
+	if not previousCollisionGroupName then
+		return
+	end
 
 	object.CollisionGroup = previousCollisionGroupName
 	previousCollisionGroups[object] = nil
@@ -42,7 +45,7 @@ local function onCharacterAdded(character)
 	character.DescendantRemoving:Connect(resetCollisionGroup)
 end
 
-for i,object in pairs(workspace:GetDescendants()) do
+for _, object in pairs(workspace:GetDescendants()) do
 	if object:FindFirstChild("HumanoidRootPart") then
 		onCharacterAdded(object)
 	end

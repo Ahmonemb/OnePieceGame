@@ -45,15 +45,15 @@ function module.GetData(Player, Name)
 	return DataSearch or warn(Name .. " does not exist.")
 end
 
-function module.SetData(Player, Name, Value)
-	local DataSearch = profiles[Player].Data[Name]
+-- function module.SetData(Player, Name, Value)
+-- 	local DataSearch = profiles[Player].Data[Name]
 
-	DataSearch = Value
-end
+-- 	DataSearch = Value
+-- end
 
 --/Events
-players.PlayerAdded:connect(function(p)
-	p.CharacterAdded:connect(function(c)
+players.PlayerAdded:Connect(function(p)
+	p.CharacterAdded:Connect(function()
 		if not profiles[p] then
 			task.wait(1)
 		end
