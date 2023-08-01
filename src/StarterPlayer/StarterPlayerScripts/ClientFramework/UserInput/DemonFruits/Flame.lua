@@ -107,7 +107,6 @@ local module = {
 
 			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
 
-
 			if cooldowns:GetAttribute("FireFlies") then return end
 			collectionService:AddTag(c,"Aim")
 			G.Aim(p,.3)
@@ -124,11 +123,12 @@ local module = {
 			local staminaData = attackData.getData("Flame","FireFlies")
 
 			if staminaData.Stamina > c.States:GetAttribute("Stamina") then return end
-
 			collectionService:RemoveTag(c,"Aim")
 
 			local anim = G.getAnim(c.Humanoid,"FireFlies")
-			anim:AdjustSpeed(1)
+			if anim then
+				anim:AdjustSpeed(1)
+			end
 
 			attackRemote:FireServer("Move4")
 		end,

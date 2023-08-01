@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local module = {}
 
 local playerCollisionGroupName = "NoCollision"
-PhysicsService:CreateCollisionGroup(playerCollisionGroupName)
+PhysicsService:RegisterCollisionGroup(playerCollisionGroupName)
 PhysicsService:CollisionGroupSetCollidable(playerCollisionGroupName, playerCollisionGroupName, false)
 
 local previousCollisionGroups = {}
@@ -12,7 +12,7 @@ local previousCollisionGroups = {}
 local function setCollisionGroup(object)
 	if object:IsA("BasePart") then
 		previousCollisionGroups[object] = object.CollisionGroupId
-		PhysicsService:SetPartCollisionGroup(object, playerCollisionGroupName)
+		object.CollisionGroup = playerCollisionGroupName
 	end
 end
 
@@ -28,10 +28,10 @@ local function resetCollisionGroup(object)
 	local previousCollisionGroupId = previousCollisionGroups[object]
 	if not previousCollisionGroupId then return end	
 
-	local previousCollisionGroupName = PhysicsService:GetCollisionGroupName(previousCollisionGroupId)
+	local previousCollisionGroupName = previousCollisionGroupId.CollisionGroup.Name
 	if not previousCollisionGroupName then return end
 
-	PhysicsService:SetPartCollisionGroup(object, previousCollisionGroupName)
+	object.CollisionGroup = previousCollisionGroupName
 	previousCollisionGroups[object] = nil
 end
 

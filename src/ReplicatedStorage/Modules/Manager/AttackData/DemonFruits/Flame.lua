@@ -24,9 +24,9 @@ return {
 		Mastery = 30
 	},
 	["FireFlies"] = {
-		cooldown = 15,
+		cooldown = 1,
 		baseDamage = 5,
-		Stamina = 25,
+		Stamina = 5,
 		Key = "V",
 		Mastery = 60
 	},

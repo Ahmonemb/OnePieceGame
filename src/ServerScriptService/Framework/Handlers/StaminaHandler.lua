@@ -7,16 +7,30 @@ local Remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes").Misc
 --/Variables
 
 --/Methods
-function module.checkStamina(Character,moduleName,skill)
+function module.checkStamina(Character,moduleName,skill,loop)
 	
-	local staminaData = attackData.getData(moduleName,skill)
+    local staminaData = attackData.getData(moduleName,skill)
 	
 	if staminaData then
-		if staminaData.Stamina <= Character.States:GetAttribute("Stamina") then
-            Character.States:SetAttribute("Stamina", Character.States:GetAttribute("Stamina") - staminaData.Stamina) 
-            return true
+        if loop then
+            if staminaData.Stamina <= Character.States:GetAttribute("Stamina") then
+                task.wait()
+                print(Character.HumanoidRootPart:FindFirstChild("FireFlyHold"))
+                task.spawn(function()
+                    while staminaData.Stamina <= Character.States:GetAttribute("Stamina") and Character.HumanoidRootPart:FindFirstChild("FireFlyHold") do
+                        Character.States:SetAttribute("Stamina", Character.States:GetAttribute("Stamina") - staminaData.Stamina)
+                        task.wait(.1)
+                        print("draining")
+                    end
+                    if Character.HumanoidRootPart:FindFirstChild("FireFlyHold") then
+                        Character.HumanoidRootPart:FindFirstChild("FireFlyHold"):Destroy()
+                    end
+                end)
+            end
         else
-            return nil
+            if staminaData.Stamina <= Character.States:GetAttribute("Stamina") then
+                Character.States:SetAttribute("Stamina", Character.States:GetAttribute("Stamina") - staminaData.Stamina) 
+            end
         end
 	end
 end

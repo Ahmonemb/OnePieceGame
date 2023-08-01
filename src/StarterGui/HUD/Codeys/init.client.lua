@@ -20,17 +20,17 @@ local StatsRemote = game.ReplicatedStorage.Remotes.Misc.Stats
 
 --/Health, Experience and Stamina
 HUD.Stamina.Value.Text = string.format("STAMINA: %d/%d",States:GetAttribute("Stamina"),States:GetAttribute("MaxStamina"))
-HUD.Stamina.Bar:TweenSize(UDim2.new((States:GetAttribute("Stamina")/States:GetAttribute("MaxStamina")),0,1,0),"Out","Quad",.6)
+HUD.Stamina.Bar:TweenSize(UDim2.new((States:GetAttribute("Stamina")/States:GetAttribute("MaxStamina")),0,1,0),"Out","Quad",.1)
 States:GetAttributeChangedSignal("Stamina"):Connect(function()
 	HUD.Stamina.Value.Text = string.format("STAMINA: %d/%d",States:GetAttribute("Stamina"),States:GetAttribute("MaxStamina"))
-	HUD.Stamina.Bar:TweenSize(UDim2.new((States:GetAttribute("Stamina")/States:GetAttribute("MaxStamina")),0,1,0),"Out","Sine",.6)
+	HUD.Stamina.Bar:TweenSize(UDim2.new((States:GetAttribute("Stamina")/States:GetAttribute("MaxStamina")),0,1,0),"Out","Sine",.1)
 end)
 
 HUD.Health.Value.Text = string.format("HEALTH: %d/%d",Humanoid.Health,Humanoid.MaxHealth)
-HUD.Health.Bar:TweenSize(UDim2.new((Humanoid.Health/Humanoid.MaxHealth),0,1,0),"Out","Quad",.6)
+HUD.Health.Bar:TweenSize(UDim2.new((Humanoid.Health/Humanoid.MaxHealth),0,1,0),"Out","Quad",.1)
 Humanoid.HealthChanged:Connect(function()
 	HUD.Health.Value.Text = string.format("HEALTH: %d/%d",Humanoid.Health,Humanoid.MaxHealth)
-	HUD.Health.Bar:TweenSize(UDim2.new((Humanoid.Health/Humanoid.MaxHealth),0,1,0),"Out","Quad",.6)
+	HUD.Health.Bar:TweenSize(UDim2.new((Humanoid.Health/Humanoid.MaxHealth),0,1,0),"Out","Quad",.1)
 end)
 
 print(Data:GetAttribute("Experience"))

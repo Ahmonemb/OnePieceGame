@@ -166,27 +166,20 @@ end
 function module.Move4(p)
 	local c = p.Character
 	local cooldowns = c.Cooldowns
-	local states = c.States
-	local mousePos = getMouse:InvokeClient(p)
 
 	local skillName = "FireFlies"
 
 	local _ = (c.HumanoidRootPart:FindFirstChild("FireFlyHold") and c.HumanoidRootPart:FindFirstChild("FireFlyHold"):Destroy())
-	--local skillData = attackData.getData(script.Name,skillName)
-	--local damage = skillData.baseDamage + dataStore.Get(p,"Fruit")
+	
 	if cooldowns:GetAttribute(skillName) then return end
 	cooldownHandler.addCooldown(c,"Flame",skillName)
-	staminaHandler.checkStamina(c,"Flame",skillName)
-
-
-	--SharedFunctions:FireAllDistanceClients(c, script.Name, 100, {Character = c, Function = "Move4"})
+	
 end
 
 --/TODO: MOVE DESCRIPTION
 function module.FireFlyHold(p)
 	local c = p.Character
 	local cooldowns = c.Cooldowns
-	local states = c.States
 
 	local skillName = "FireFlies"
 
@@ -194,12 +187,14 @@ function module.FireFlyHold(p)
 	local damage = skillData.baseDamage + dataStore.GetData(p, "Fruit")
 
 	if cooldowns:GetAttribute(skillName) then return end
-	cooldownHandler.addCooldown(c,"Flame",skillName)
-	staminaHandler.checkStamina(c,"Flame",skillName)
+
+	staminaHandler.checkStamina(c,"Flame",skillName,true)
 
 	local Val = Instance.new("BoolValue")
 	Val.Name = "FireFlyHold"
 	Val.Parent = c.HumanoidRootPart
+
+	
 
 	while c.HumanoidRootPart:FindFirstChild("FireFlyHold") do
 		task.spawn(function()
@@ -221,7 +216,6 @@ function module.FireFlyHold(p)
 
 			--/Damage
 			if hitPoint then
-				
 				local targets = damageModule.getAOE(c,hitPoint,30)
 				for i = 1,#targets do
 					local target = targets[i]

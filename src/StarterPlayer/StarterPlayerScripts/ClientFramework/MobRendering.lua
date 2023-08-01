@@ -32,7 +32,7 @@ local function CreateMob(Data)
 	
 	for i,v in pairs(Data.Model:GetChildren()) do
 		if v:IsA("BasePart") then 
-			PhysicsService:SetPartCollisionGroup(v, "NoCollision")
+			v.CollisionGroup = "NoCollision"
 		end
 	end
 	
