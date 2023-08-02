@@ -16,7 +16,7 @@ do
 		end
 	end)
 
-	UserInputService.InputEnded:Connect(function(input, gpe)
+	UserInputService.InputEnded:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton2 then
 			rmbUpBindable:Fire()
 		end

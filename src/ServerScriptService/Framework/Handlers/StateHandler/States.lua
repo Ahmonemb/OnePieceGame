@@ -1,33 +1,33 @@
 return {
 	["Stunned"] = {
 		value = false,
-		duration = .4
+		duration = 0.4,
 	},
 	["KeyHeld"] = {
-		value = ""
+		value = "",
 	},
 	["ModeActive"] = {
-		value = ""
+		value = "",
 	},
 	["MeleeClicked"] = {
-		value = os.clock()
+		value = os.clock(),
 	},
 	["ComboCount"] = {
-		value = 0
+		value = 0,
 	},
 	["BusoActive"] = {
-		value = false
+		value = false,
 	},
 	["Attacking"] = {
-		value = ""
+		value = "",
 	},
 	["Stamina"] = {
-		value = 100
+		value = 100,
 	},
 	["MaxStamina"] = {
-		value = 100
+		value = 100,
 	},
 	["Safezone"] = {
-		value = false
-	}
+		value = false,
+	},
 }

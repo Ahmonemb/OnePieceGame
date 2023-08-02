@@ -12,8 +12,9 @@ game.Players.PlayerAdded:Connect(function(Player)
 		Character:SetAttribute("Attacking", false)
 		Character:SetAttribute("InAir", false)
 		Character:SetAttribute("Dashing", false)
-		local combo = Instance.new("IntValue", Character.States)
+		local combo = Instance.new("IntValue")
 		combo.Name = "Combo"
+		combo.Parent = Character.States
 	end)
 end)
 
@@ -25,7 +26,10 @@ ServerRemote.OnServerInvoke = function(Player, Action, Input, Params)
 		print("stopped")
 		Inputs.InputTable[Player][Input] = nil
 	elseif Action == "Skill" then
-		if Player.Character:GetAttribute("Stunned") == false and Player.Character:GetAttribute("Attacking") == false then
+		if
+			Player.Character:GetAttribute("Stunned") == false
+			and Player.Character:GetAttribute("Attacking") == false
+		then
 			local Move = Functions.FireMove(Player, Params)
 			return Move
 		end

@@ -8,13 +8,13 @@ local Skillsets = {
 		["Q"] = {Name = "Dash", Cooldown = 1.5, ExtraInfo = { } },
 		["LeftShift"] = {Name = "Sprint", Cooldown = 1, ExtraInfo = { } },
 	},
-	]]--
-	
+	]]
+	--
+
 	["TestSkillSet"] = {
-		["E"] = {Name = "Slice", Cooldown = 1.3, ExtraInfo = { } },
-		["R"] = {Name = "Beam", Cooldown = 1.3, ExtraInfo = { } },
+		["E"] = { Name = "Slice", Cooldown = 1.3, ExtraInfo = {} },
+		["R"] = { Name = "Beam", Cooldown = 1.3, ExtraInfo = {} },
 	},
-	
 }
 
 return Skillsets

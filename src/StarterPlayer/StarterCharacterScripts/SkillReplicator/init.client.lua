@@ -11,7 +11,6 @@ local Cooldown = require(RS.Replicated.Cooldown)
 local Skillsets = require(RS.Replicated.SkillSets)
 local VFX = require(script:WaitForChild("FX"))
 
-
 local AvailableSets = {
 	"Movement",
 	"Combat",
@@ -20,33 +19,42 @@ local AvailableSets = {
 
 local InputBegan = coroutine.create(function()
 	UserInputService.InputBegan:Connect(function(UserInput, GPE)
-		if GPE then return end
-		local Skill, Set, Info, Input = nil, nil, nil, nil
+		if GPE then
+			return
+		end
+		local Skill, Info, Input = nil, nil, nil
 		if UserInput.UserInputType == Enum.UserInputType.MouseButton1 then
 			Input = "M1"
-			if Cooldown:CheckCooldown("M1", Player) == false and Character:GetAttribute("Stunned") == false and Character:GetAttribute("Attacking") == false then
-				Info = {Data = "Test"}
+			if
+				Cooldown:CheckCooldown("M1", Player) == false
+				and Character:GetAttribute("Stunned") == false
+				and Character:GetAttribute("Attacking") == false
+			then
+				Info = { Data = "Test" }
 			end
 		else
 			Input = UserInput.KeyCode.Name
-			Info = {Data = "Test"}
+			Info = { Data = "Test" }
 		end
-		
-		for i, v in pairs(AvailableSets) do
+
+		for _, v in pairs(AvailableSets) do
 			if Skillsets[v] then
 				if Skillsets[v][Input] then
 					Skill = Skillsets[v][Input]
-					Set = v
 				end
 			end
 		end
 		if Skill then
-			if Cooldown:CheckCooldown(Skill.Name, Player) == false and Character:GetAttribute("Stunned") == false and Character:GetAttribute("Attacking") == false and Character:GetAttribute("InAir") == false then
+			if
+				Cooldown:CheckCooldown(Skill.Name, Player) == false
+				and Character:GetAttribute("Stunned") == false
+				and Character:GetAttribute("Attacking") == false
+				and Character:GetAttribute("InAir") == false
+			then
 				Server:InvokeServer("InputBegan", UserInput.KeyCode.Name)
 				Character:SetAttribute("Attacking", true)
 				if Info then
 					print("Fire Skill")
-					local Fire = Server:InvokeServer("Skill", nil, {Info, Skill["Name"], Set})
 					Cooldown:AddCooldown(Skill.Name, Skill.Cooldown, Player)
 				end
 				Character:SetAttribute("Attacking", false)
@@ -57,6 +65,9 @@ end)
 
 local InputEnded = coroutine.create(function()
 	UserInputService.InputEnded:Connect(function(Input, GPE)
+		if GPE then
+			return
+		end
 		if Character:GetAttribute("Attacking") == true then
 			Server:InvokeServer("InputEnded", Input.KeyCode.Name)
 		end

@@ -25,59 +25,63 @@ local function Run()
 	Running = true
 	local RunAnim = Hum:LoadAnimation(script:WaitForChild("Sprint"))
 	RunAnim:Play()
-	
+
 	Hum.WalkSpeed = Speed
-	
-	local Val = Instance.new("BoolValue",Char)
+
+	local Val = Instance.new("BoolValue")
 	Val.Name = "Running"
-	
+	Val.Parent = Char
+
 	local goal = {}
 	goal.FieldOfView = 80
-	local info = TweenInfo.new(.5)
-	local tween = game:GetService("TweenService"):Create(Camera,info,goal)
+	local info = TweenInfo.new(0.5)
+	local tween = game:GetService("TweenService"):Create(Camera, info, goal)
 	tween:Play()
-	
 end
 
 local function Stop()
 	Running = false
 	local AnimTracks = Hum:GetPlayingAnimationTracks()
-	
-	for i,v in pairs(AnimTracks) do
+
+	for _, v in pairs(AnimTracks) do
 		if v.Name == "Sprint" then
 			v:Stop()
 		end
 	end
-	
-	for i,v in pairs(Char:GetChildren()) do
+
+	for _, v in pairs(Char:GetChildren()) do
 		if v.Name == "Running" then
 			v:Destroy()
 		end
 	end
-	
+
 	local goal = {}
 	goal.FieldOfView = 70
 	local info = TweenInfo.new(1)
-	local tween = game:GetService("TweenService"):Create(Camera,info,goal)
+	local tween = game:GetService("TweenService"):Create(Camera, info, goal)
 	tween:Play()
-	
 end
-	
-UIS.InputBegan:Connect(function(input,istyping)
-	
-	for i,v in pairs(Stuns) do
-		if game.Players.LocalPlayer.Character:FindFirstChild(v) then return end	
+
+UIS.InputBegan:Connect(function(input, istyping)
+	for _, v in pairs(Stuns) do
+		if game.Players.LocalPlayer.Character:FindFirstChild(v) then
+			return
+		end
 	end
-	
-	if istyping then return end
-	
+
+	if istyping then
+		return
+	end
+
 	if input.KeyCode == Enum.KeyCode[Button] and NoKeyDown == false and Running == false then
 		Run()
 	end
 end)
 
-UIS.InputEnded:Connect(function(input,istyping)
-
+UIS.InputEnded:Connect(function(input, istyping)
+	if istyping then
+		return
+	end
 	if input.KeyCode == Enum.KeyCode[Button] and Running == true then
 		Stop()
 	end
@@ -110,16 +114,19 @@ RunService.Heartbeat:Connect(function()
 		NoKeyDown = true
 		if Running == true then
 			Stop()
-			end
+		end
 	else
 		NoKeyDown = false
 	end
-	
-	for i,v in pairs(Stuns) do
-	if v ~= "Dashing" then
-			if game.Players.LocalPlayer.Character:FindFirstChild(v) then Stop() end	
-			end
-	end
-	if Char:FindFirstChild("Blocking") then Stop() end
-end)
 
+	for _, v in pairs(Stuns) do
+		if v ~= "Dashing" then
+			if game.Players.LocalPlayer.Character:FindFirstChild(v) then
+				Stop()
+			end
+		end
+	end
+	if Char:FindFirstChild("Blocking") then
+		Stop()
+	end
+end)

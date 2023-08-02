@@ -54,7 +54,7 @@ local toastLowerText
 local function initializeUI()
 	assert(not initialized)
 
-	uiRoot = create("ScreenGui"){
+	uiRoot = create("ScreenGui")({
 		Name = "RbxCameraUI",
 		AutoLocalize = false,
 		Enabled = true,
@@ -63,7 +63,7 @@ local function initializeUI()
 		ResetOnSpawn = false,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 
-		create("ImageLabel"){
+		create("ImageLabel")({
 			Name = "Toast",
 			Visible = false,
 			AnchorPoint = Vector2.new(0.5, 0),
@@ -79,14 +79,14 @@ local function initializeUI()
 			SliceCenter = Rect.new(3, 3, 3, 3),
 			ClipsDescendants = true,
 
-			create("Frame"){
+			create("Frame")({
 				Name = "IconBuffer",
 				BackgroundTransparency = 1,
 				BorderSizePixel = 0,
 				Position = UDim2.new(0, 0, 0, 0),
 				Size = UDim2.new(0, 80, 1, 0),
 
-				create("ImageLabel"){
+				create("ImageLabel")({
 					Name = "Icon",
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					BackgroundTransparency = 1,
@@ -96,10 +96,10 @@ local function initializeUI()
 					Image = "rbxasset://textures/ui/Camera/CameraToastIcon.png",
 					ImageColor3 = TOAST_FOREGROUND_COLOR,
 					ImageTransparency = 1,
-				}
-			},
+				}),
+			}),
 
-			create("Frame"){
+			create("Frame")({
 				Name = "TextBuffer",
 				BackgroundTransparency = 1,
 				BorderSizePixel = 0,
@@ -107,7 +107,7 @@ local function initializeUI()
 				Size = UDim2.new(1, -80, 1, 0),
 				ClipsDescendants = true,
 
-				create("TextLabel"){
+				create("TextLabel")({
 					Name = "Upper",
 					AnchorPoint = Vector2.new(0, 1),
 					BackgroundTransparency = 1,
@@ -120,9 +120,9 @@ local function initializeUI()
 					TextSize = 19,
 					TextXAlignment = Enum.TextXAlignment.Left,
 					TextYAlignment = Enum.TextYAlignment.Center,
-				},
+				}),
 
-				create("TextLabel"){
+				create("TextLabel")({
 					Name = "Lower",
 					AnchorPoint = Vector2.new(0, 0),
 					BackgroundTransparency = 1,
@@ -135,12 +135,12 @@ local function initializeUI()
 					TextSize = 15,
 					TextXAlignment = Enum.TextXAlignment.Left,
 					TextYAlignment = Enum.TextYAlignment.Center,
-				},
-			},
-		},
+				}),
+			}),
+		}),
 
 		Parent = PlayerGui,
-	}
+	})
 
 	toast = uiRoot.Toast
 	toastIcon = toast.IconBuffer.Icon

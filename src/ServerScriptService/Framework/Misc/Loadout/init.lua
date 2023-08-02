@@ -10,14 +10,14 @@ local module = {}
 --/Variables
 
 --/Events
-players.PlayerAdded:connect(function(p)
+players.PlayerAdded:Connect(function(p)
 	for _, v in pairs(script:GetChildren()) do
 		if v:IsA("Folder") then
 			v:Clone().Parent = p
 		end
 	end
 
-	p.CharacterAdded:connect(function(c)
+	p.CharacterAdded:Connect(function(c)
 		stateHandler:CreateProfile(c)
 
 		Races.LoadRace(p)

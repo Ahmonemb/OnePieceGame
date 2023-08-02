@@ -8,5 +8,5 @@ return {
 	"Seven",
 	"Eight",
 	"Nine",
-	"Zero"
+	"Zero",
 }

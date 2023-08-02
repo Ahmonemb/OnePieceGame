@@ -1,7 +1,7 @@
 local CameraShaker = require(game.ReplicatedStorage.Replicated.CameraShaker)
-local Camera = workspace.CurrentCamera
+local Camera1 = workspace.CurrentCamera
 local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCFrame)
-	Camera.CFrame = Camera.CFrame * shakeCFrame
+	Camera1.CFrame = Camera1.CFrame * shakeCFrame
 end)
 
 camShake:Start()

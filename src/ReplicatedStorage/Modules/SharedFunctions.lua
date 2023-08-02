@@ -1,7 +1,6 @@
---[[ Services ]]--
-local UserInput = game:GetService("UserInputService")
+--[[ Services ]]
+--
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
 
@@ -31,9 +30,10 @@ function SharedFunctions:Weld(Part0, Part1, C0, Name)
 
 	return weld
 end
---[[ Custom Wait Function ]]--
+--[[ Custom Wait Function ]]
+--
 function SharedFunctions:Wait(TIME)
-	TIME = TIME or 1/60
+	TIME = TIME or 1 / 60
 	local SECOND = GLOBAL_CLOCK()
 	while GLOBAL_CLOCK() - SECOND < TIME do
 		RunService.Stepped:Wait()
@@ -49,7 +49,9 @@ function SharedFunctions:Spawn(Func)
 			Func()
 		end)
 
-		if not succ then print(err) end
+		if not succ then
+			print(err)
+		end
 	end)
 
 	coroutineresume(NewCO)
@@ -63,7 +65,7 @@ function SharedFunctions:Delay(Time, Func)
 
 		local succ, err = pcall(function()
 			if Time >= 1 then
-				wait(Time)
+				task.wait(Time)
 			else
 				SharedFunctions:Wait(Time)
 			end
@@ -71,7 +73,9 @@ function SharedFunctions:Delay(Time, Func)
 			Func()
 		end)
 
-		if not succ then print(err) end
+		if not succ then
+			print(err)
+		end
 	end)
 
 	coroutineresume(NewCO)
@@ -83,7 +87,7 @@ function SharedFunctions:DeepSearch(Folder, Type, InfoTable)
 
 	local Children = Folder:GetChildren()
 
-	for i,Object in ipairs(Children) do
+	for _, Object in ipairs(Children) do
 		if Object:IsA(Type) then
 			NewTable[#NewTable + 1] = Object
 		elseif Object:IsA("Folder") or Object:IsA("ModuleScript") then
@@ -95,8 +99,9 @@ end
 
 function SharedFunctions:FireAllDistanceClients(Character, RemoteName, Distance, Data)
 	local Remote = self:DeepSearch(Remotes, "RemoteEvent")
-	local HumanoidRootPart = Character:FindFirstChild("PseudoTorso") and Character.PseudoTorso  or Character.HumanoidRootPart
-	for _,v in ipairs(Remote) do
+	local HumanoidRootPart = Character:FindFirstChild("PseudoTorso") and Character.PseudoTorso
+		or Character.HumanoidRootPart
+	for _, v in ipairs(Remote) do
 		if v.Name == RemoteName then
 			Remote = v
 			break
@@ -104,7 +109,7 @@ function SharedFunctions:FireAllDistanceClients(Character, RemoteName, Distance,
 	end
 	assert(type(Remote) == "userdata", "couldnt find remote")
 	for _, v in ipairs(PlayersService:GetChildren()) do
-		local Magnitude = (HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude 
+		local Magnitude = (HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
 		if Magnitude <= Distance then
 			Remote:FireClient(v, Data)
 		end
@@ -116,7 +121,6 @@ function SharedFunctions:IsPlayer(Character)
 end
 
 function SharedFunctions:BodyPosition(Parent, P, D, Force, Position, Duration)
-
 	local BodyPosition = Instance.new("BodyPosition")
 	BodyPosition.P = P
 	BodyPosition.D = D
@@ -129,17 +133,16 @@ function SharedFunctions:BodyPosition(Parent, P, D, Force, Position, Duration)
 	return BodyPosition
 end
 
-function SharedFunctions:BodyGyro(Parent, P, D, Torque, Position, Duration)
-
+function SharedFunctions:BodyGyro(Parent, P, D, Position, Duration)
 	local BodyGyro = Instance.new("BodyGyro")
 	BodyGyro.P = P
 	BodyGyro.D = D
-	BodyGyro.MaxTorque = Vector3.new(1e5,1e5,1e5)
+	BodyGyro.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
 	BodyGyro.CFrame = Position
 	BodyGyro.Parent = Parent
-	
+
 	Debris:AddItem(BodyGyro, Duration)
-	
+
 	return BodyGyro
 end
 

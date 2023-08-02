@@ -3,13 +3,14 @@
 	2018 Camera Update - AllYourBlox
 --]]
 
---[[ Local Constants ]]--
-local UNIT_Z = Vector3.new(0,0,1)
-local X1_Y0_Z1 = Vector3.new(1,0,1)	--Note: not a unit vector, used for projecting onto XZ plane
+--[[ Local Constants ]]
+--
+local UNIT_Z = Vector3.new(0, 0, 1)
+local X1_Y0_Z1 = Vector3.new(1, 0, 1) --Note: not a unit vector, used for projecting onto XZ plane
 
 local THUMBSTICK_DEADZONE = 0.2
-local DEFAULT_DISTANCE = 12.5	-- Studs
-local PORTRAIT_DEFAULT_DISTANCE = 25		-- Studs
+local DEFAULT_DISTANCE = 12.5 -- Studs
+local PORTRAIT_DEFAULT_DISTANCE = 25 -- Studs
 local FIRST_PERSON_DISTANCE_THRESHOLD = 1.0 -- Below this value, snap into first person
 
 local CAMERA_ACTION_PRIORITY = Enum.ContextActionPriority.Default.Value
@@ -31,15 +32,15 @@ local VR_HIGH_INTENSITY_ROTATION = Vector2.new(math.rad(45), 0)
 local VR_LOW_INTENSITY_REPEAT = 0.1
 local VR_HIGH_INTENSITY_REPEAT = 0.4
 
-local ZERO_VECTOR2 = Vector2.new(0,0)
-local ZERO_VECTOR3 = Vector3.new(0,0,0)
+local ZERO_VECTOR2 = Vector2.new(0, 0)
+local ZERO_VECTOR3 = Vector3.new(0, 0, 0)
 
 local TOUCH_SENSITIVTY = Vector2.new(0.00945 * math.pi, 0.003375 * math.pi)
-local MOUSE_SENSITIVITY = Vector2.new( 0.002 * math.pi, 0.0015 * math.pi )
+local MOUSE_SENSITIVITY = Vector2.new(0.002 * math.pi, 0.0015 * math.pi)
 
-local SEAT_OFFSET = Vector3.new(0,5,0)
-local VR_SEAT_OFFSET = Vector3.new(0,4,0)
-local HEAD_OFFSET = Vector3.new(0,1.5,0)
+local SEAT_OFFSET = Vector3.new(0, 5, 0)
+local VR_SEAT_OFFSET = Vector3.new(0, 4, 0)
+local HEAD_OFFSET = Vector3.new(0, 1.5, 0)
 local R15_HEAD_OFFSET = Vector3.new(0, 1.5, 0)
 local R15_HEAD_OFFSET_NO_SCALING = Vector3.new(0, 2, 0)
 local HUMANOID_ROOT_PART_SIZE = Vector3.new(2, 2, 1)
@@ -54,14 +55,16 @@ local ZOOM_SENSITIVITY_CURVATURE = 0.5
 local abs = math.abs
 local sign = math.sign
 
-local FFlagUserCameraToggle do
+local FFlagUserCameraToggle
+do
 	local success, result = pcall(function()
 		return UserSettings():IsUserFeatureEnabled("UserCameraToggle")
 	end)
 	FFlagUserCameraToggle = success and result
 end
 
-local FFlagUserDontAdjustSensitvityForPortrait do
+local FFlagUserDontAdjustSensitvityForPortrait
+do
 	local success, result = pcall(function()
 		return UserSettings():IsUserFeatureEnabled("UserDontAdjustSensitvityForPortrait")
 	end)
@@ -74,7 +77,8 @@ local CameraToggleStateController = require(script.Parent:WaitForChild("CameraTo
 local CameraInput = require(script.Parent:WaitForChild("CameraInput"))
 local CameraUI = require(script.Parent:WaitForChild("CameraUI"))
 
---[[ Roblox Services ]]--
+--[[ Roblox Services ]]
+--
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
@@ -83,7 +87,8 @@ local ContextActionService = game:GetService("ContextActionService")
 local VRService = game:GetService("VRService")
 local UserGameSettings = UserSettings():GetService("UserGameSettings")
 
---[[ The Module ]]--
+--[[ The Module ]]
+--
 local BaseCamera = {}
 BaseCamera.__index = BaseCamera
 
@@ -107,14 +112,16 @@ function BaseCamera.new()
 
 	-- Subject and position on last update call
 	self.lastSubject = nil
-	self.lastSubjectPosition = Vector3.new(0,5,0)
+	self.lastSubjectPosition = Vector3.new(0, 5, 0)
 
 	-- These subject distance members refer to the nominal camera-to-subject follow distance that the camera
 	-- is trying to maintain, not the actual measured value.
 	-- The default is updated when screen orientation or the min/max distances change,
 	-- to be sure the default is always in range and appropriate for the orientation.
-	self.defaultSubjectDistance = Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, DEFAULT_DISTANCE)
-	self.currentSubjectDistance = Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, DEFAULT_DISTANCE)
+	self.defaultSubjectDistance =
+		Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, DEFAULT_DISTANCE)
+	self.currentSubjectDistance =
+		Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, DEFAULT_DISTANCE)
 
 	self.inFirstPerson = false
 	self.inMouseLockedMode = false
@@ -166,7 +173,7 @@ function BaseCamera.new()
 	self.currentSpeed = 0
 	self.maxSpeed = 6
 	self.vrMaxSpeed = 4
-	self.lastThumbstickPos = Vector2.new(0,0)
+	self.lastThumbstickPos = Vector2.new(0, 0)
 	self.ySensitivity = 0.65
 	self.lastVelocity = nil
 	self.gamepadConnectedConn = nil
@@ -203,37 +210,50 @@ function BaseCamera.new()
 		self:OnCharacterAdded(char)
 	end)
 
-	if self.cameraChangedConn then self.cameraChangedConn:Disconnect() end
+	if self.cameraChangedConn then
+		self.cameraChangedConn:Disconnect()
+	end
 	self.cameraChangedConn = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
 		self:OnCurrentCameraChanged()
 	end)
 	self:OnCurrentCameraChanged()
 
-	if self.playerCameraModeChangeConn then self.playerCameraModeChangeConn:Disconnect() end
+	if self.playerCameraModeChangeConn then
+		self.playerCameraModeChangeConn:Disconnect()
+	end
 	self.playerCameraModeChangeConn = player:GetPropertyChangedSignal("CameraMode"):Connect(function()
 		self:OnPlayerCameraPropertyChange()
 	end)
 
-	if self.minDistanceChangeConn then self.minDistanceChangeConn:Disconnect() end
+	if self.minDistanceChangeConn then
+		self.minDistanceChangeConn:Disconnect()
+	end
 	self.minDistanceChangeConn = player:GetPropertyChangedSignal("CameraMinZoomDistance"):Connect(function()
 		self:OnPlayerCameraPropertyChange()
 	end)
 
-	if self.maxDistanceChangeConn then self.maxDistanceChangeConn:Disconnect() end
+	if self.maxDistanceChangeConn then
+		self.maxDistanceChangeConn:Disconnect()
+	end
 	self.maxDistanceChangeConn = player:GetPropertyChangedSignal("CameraMaxZoomDistance"):Connect(function()
 		self:OnPlayerCameraPropertyChange()
 	end)
 
-	if self.playerDevTouchMoveModeChangeConn then self.playerDevTouchMoveModeChangeConn:Disconnect() end
+	if self.playerDevTouchMoveModeChangeConn then
+		self.playerDevTouchMoveModeChangeConn:Disconnect()
+	end
 	self.playerDevTouchMoveModeChangeConn = player:GetPropertyChangedSignal("DevTouchMovementMode"):Connect(function()
 		self:OnDevTouchMovementModeChanged()
 	end)
 	self:OnDevTouchMovementModeChanged() -- Init
 
-	if self.gameSettingsTouchMoveMoveChangeConn then self.gameSettingsTouchMoveMoveChangeConn:Disconnect() end
-	self.gameSettingsTouchMoveMoveChangeConn = UserGameSettings:GetPropertyChangedSignal("TouchMovementMode"):Connect(function()
-		self:OnGameSettingsTouchMovementModeChanged()
-	end)
+	if self.gameSettingsTouchMoveMoveChangeConn then
+		self.gameSettingsTouchMoveMoveChangeConn:Disconnect()
+	end
+	self.gameSettingsTouchMoveMoveChangeConn = UserGameSettings:GetPropertyChangedSignal("TouchMovementMode")
+		:Connect(function()
+			self:OnGameSettingsTouchMovementModeChanged()
+		end)
 	self:OnGameSettingsTouchMovementModeChanged() -- Init
 
 	UserGameSettings:SetCameraYInvertVisible()
@@ -333,7 +353,8 @@ function BaseCamera:GetSubjectPosition()
 						if humanoid.AutomaticScalingEnabled then
 							heightOffset = R15_HEAD_OFFSET
 							if bodyPartToFollow == humanoid.RootPart then
-								local rootPartSizeOffset = (humanoid.RootPart.Size.Y/2) - (HUMANOID_ROOT_PART_SIZE.Y/2)
+								local rootPartSizeOffset = (humanoid.RootPart.Size.Y / 2)
+									- (HUMANOID_ROOT_PART_SIZE.Y / 2)
 								heightOffset = heightOffset + Vector3.new(0, rootPartSizeOffset, 0)
 							end
 						else
@@ -347,10 +368,10 @@ function BaseCamera:GetSubjectPosition()
 						heightOffset = ZERO_VECTOR3
 					end
 
-					result = bodyPartToFollow.CFrame.p + bodyPartToFollow.CFrame:vectorToWorldSpace(heightOffset + humanoid.CameraOffset)
+					result = bodyPartToFollow.CFrame.p
+						+ bodyPartToFollow.CFrame:vectorToWorldSpace(heightOffset + humanoid.CameraOffset)
 				end
 			end
-
 		elseif cameraSubject:IsA("VehicleSeat") then
 			local offset = SEAT_OFFSET
 			if VRService.VREnabled then
@@ -385,9 +406,11 @@ end
 function BaseCamera:UpdateDefaultSubjectDistance()
 	local player = Players.LocalPlayer
 	if self.portraitMode then
-		self.defaultSubjectDistance = Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, PORTRAIT_DEFAULT_DISTANCE)
+		self.defaultSubjectDistance =
+			Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, PORTRAIT_DEFAULT_DISTANCE)
 	else
-		self.defaultSubjectDistance = Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, DEFAULT_DISTANCE)
+		self.defaultSubjectDistance =
+			Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, DEFAULT_DISTANCE)
 	end
 end
 
@@ -445,8 +468,10 @@ end
 
 function BaseCamera:OnGameSettingsTouchMovementModeChanged()
 	if Players.LocalPlayer.DevTouchMovementMode == Enum.DevTouchMovementMode.UserChoice then
-		if (UserGameSettings.TouchMovementMode == Enum.TouchMovementMode.DynamicThumbstick
-			or UserGameSettings.TouchMovementMode == Enum.TouchMovementMode.Default) then
+		if
+			UserGameSettings.TouchMovementMode == Enum.TouchMovementMode.DynamicThumbstick
+			or UserGameSettings.TouchMovementMode == Enum.TouchMovementMode.Default
+		then
 			self:OnDynamicThumbstickEnabled()
 		else
 			self:OnDynamicThumbstickDisabled()
@@ -477,9 +502,14 @@ end
 function BaseCamera:InputTranslationToCameraAngleChange(translationVector, sensitivity)
 	if not FFlagUserDontAdjustSensitvityForPortrait then
 		local camera = game.Workspace.CurrentCamera
-		if camera and camera.ViewportSize.X > 0 and camera.ViewportSize.Y > 0 and (camera.ViewportSize.Y > camera.ViewportSize.X) then
+		if
+			camera
+			and camera.ViewportSize.X > 0
+			and camera.ViewportSize.Y > 0
+			and (camera.ViewportSize.Y > camera.ViewportSize.X)
+		then
 			-- Screen has portrait orientation, swap X and Y sensitivity
-			return translationVector * Vector2.new( sensitivity.Y, sensitivity.X)
+			return translationVector * Vector2.new(sensitivity.Y, sensitivity.X)
 		end
 	end
 	return translationVector * sensitivity
@@ -546,7 +576,8 @@ function BaseCamera:OnPointerAction(wheel, pan, pinch, processed)
 
 	if pan.Magnitude > 0 then
 		local inversionVector = Vector2.new(1, UserGameSettings:GetCameraYInvertValue())
-		local rotateDelta = self:InputTranslationToCameraAngleChange(PAN_SENSITIVITY*pan, MOUSE_SENSITIVITY)*inversionVector
+		local rotateDelta = self:InputTranslationToCameraAngleChange(PAN_SENSITIVITY * pan, MOUSE_SENSITIVITY)
+			* inversionVector
 		self.rotateInput = self.rotateInput + rotateDelta
 	end
 
@@ -558,7 +589,7 @@ function BaseCamera:OnPointerAction(wheel, pan, pinch, processed)
 		if self.inFirstPerson and zoomDelta > 0 then
 			newZoom = FIRST_PERSON_DISTANCE_THRESHOLD
 		else
-			newZoom = zoom + zoomDelta*(1 + zoom*ZOOM_SENSITIVITY_CURVATURE)
+			newZoom = zoom + zoomDelta * (1 + zoom * ZOOM_SENSITIVITY_CURVATURE)
 		end
 
 		self:SetCameraToSubjectDistance(newZoom)
@@ -587,7 +618,9 @@ function BaseCamera:ConnectInputEvents()
 	end)
 
 	self.gamepadConnectedConn = UserInputService.GamepadDisconnected:connect(function(gamepadEnum)
-		if self.activeGamepad ~= gamepadEnum then return end
+		if self.activeGamepad ~= gamepadEnum then
+			return
+		end
 		self.activeGamepad = nil
 		self:AssignActivateGamepad()
 	end)
@@ -686,7 +719,7 @@ function BaseCamera:Cleanup()
 	self.lastSubjectCFrame = nil
 	self.userPanningTheCamera = false
 	self.rotateInput = Vector2.new()
-	self.gamepadPanningCamera = Vector2.new(0,0)
+	self.gamepadPanningCamera = Vector2.new(0, 0)
 
 	-- Reset input states
 	self.startPos = nil
@@ -734,27 +767,27 @@ end
 
 function BaseCamera:GetGamepadPan(name, state, input)
 	if input.UserInputType == self.activeGamepad and input.KeyCode == Enum.KeyCode.Thumbstick2 then
---		if self.L3ButtonDown then
---			-- L3 Thumbstick is depressed, right stick controls dolly in/out
---			if (input.Position.Y > THUMBSTICK_DEADZONE) then
---				self.currentZoomSpeed = 0.96
---			elseif (input.Position.Y < -THUMBSTICK_DEADZONE) then
---				self.currentZoomSpeed = 1.04
---			else
---				self.currentZoomSpeed = 1.00
---			end
---		else
-			if state == Enum.UserInputState.Cancel then
-				self.gamepadPanningCamera = ZERO_VECTOR2
-				return
-			end
+		--		if self.L3ButtonDown then
+		--			-- L3 Thumbstick is depressed, right stick controls dolly in/out
+		--			if (input.Position.Y > THUMBSTICK_DEADZONE) then
+		--				self.currentZoomSpeed = 0.96
+		--			elseif (input.Position.Y < -THUMBSTICK_DEADZONE) then
+		--				self.currentZoomSpeed = 1.04
+		--			else
+		--				self.currentZoomSpeed = 1.00
+		--			end
+		--		else
+		if state == Enum.UserInputState.Cancel then
+			self.gamepadPanningCamera = ZERO_VECTOR2
+			return
+		end
 
-			local inputVector = Vector2.new(input.Position.X, -input.Position.Y)
-			if inputVector.magnitude > THUMBSTICK_DEADZONE then
-				self.gamepadPanningCamera = Vector2.new(input.Position.X, -input.Position.Y)
-			else
-				self.gamepadPanningCamera = ZERO_VECTOR2
-			end
+		local inputVector = Vector2.new(input.Position.X, -input.Position.Y)
+		if inputVector.magnitude > THUMBSTICK_DEADZONE then
+			self.gamepadPanningCamera = Vector2.new(input.Position.X, -input.Position.Y)
+		else
+			self.gamepadPanningCamera = ZERO_VECTOR2
+		end
 		--end
 		return Enum.ContextActionResult.Sink
 	end
@@ -784,7 +817,8 @@ function BaseCamera:DoKeyboardPanTurn(name, state, input)
 end
 
 function BaseCamera:DoPanRotateCamera(rotateAngle)
-	local angle = Util.RotateVectorByAngleAndRound(self:GetCameraLookVector() * Vector3.new(1,0,1), rotateAngle, math.pi*0.25)
+	local angle =
+		Util.RotateVectorByAngleAndRound(self:GetCameraLookVector() * Vector3.new(1, 0, 1), rotateAngle, math.pi * 0.25)
 	if angle ~= 0 then
 		self.rotateInput = self.rotateInput + Vector2.new(angle, 0)
 		self.lastUserPanCamera = tick()
@@ -799,9 +833,9 @@ function BaseCamera:DoGamepadZoom(name, state, input)
 				if self.distanceChangeEnabled then
 					local dist = self:GetCameraToSubjectDistance()
 
-					if dist > (GAMEPAD_ZOOM_STEP_2 + GAMEPAD_ZOOM_STEP_3)/2 then
+					if dist > (GAMEPAD_ZOOM_STEP_2 + GAMEPAD_ZOOM_STEP_3) / 2 then
 						self:SetCameraToSubjectDistance(GAMEPAD_ZOOM_STEP_2)
-					elseif dist > (GAMEPAD_ZOOM_STEP_1 + GAMEPAD_ZOOM_STEP_2)/2 then
+					elseif dist > (GAMEPAD_ZOOM_STEP_1 + GAMEPAD_ZOOM_STEP_2) / 2 then
 						self:SetCameraToSubjectDistance(GAMEPAD_ZOOM_STEP_1)
 					else
 						self:SetCameraToSubjectDistance(GAMEPAD_ZOOM_STEP_3)
@@ -824,14 +858,14 @@ function BaseCamera:DoGamepadZoom(name, state, input)
 		return Enum.ContextActionResult.Sink
 	end
 	return Enum.ContextActionResult.Pass
---	elseif input.UserInputType == self.activeGamepad and input.KeyCode == Enum.KeyCode.ButtonL3 then
---		if (state == Enum.UserInputState.Begin) then
---			self.L3ButtonDown = true
---		elseif (state == Enum.UserInputState.End) then
---			self.L3ButtonDown = false
---			self.currentZoomSpeed = 1.00
---		end
---	end
+	--	elseif input.UserInputType == self.activeGamepad and input.KeyCode == Enum.KeyCode.ButtonL3 then
+	--		if (state == Enum.UserInputState.Begin) then
+	--			self.L3ButtonDown = true
+	--		elseif (state == Enum.UserInputState.End) then
+	--			self.L3ButtonDown = false
+	--			self.currentZoomSpeed = 1.00
+	--		end
+	--	end
 end
 
 function BaseCamera:DoKeyboardZoom(name, state, input)
@@ -845,9 +879,9 @@ function BaseCamera:DoKeyboardZoom(name, state, input)
 
 	if self.distanceChangeEnabled and Players.LocalPlayer.CameraMode ~= Enum.CameraMode.LockFirstPerson then
 		if input.KeyCode == Enum.KeyCode.I then
-			self:SetCameraToSubjectDistance( self.currentSubjectDistance - 5 )
+			self:SetCameraToSubjectDistance(self.currentSubjectDistance - 5)
 		elseif input.KeyCode == Enum.KeyCode.O then
-			self:SetCameraToSubjectDistance( self.currentSubjectDistance + 5 )
+			self:SetCameraToSubjectDistance(self.currentSubjectDistance + 5)
 		end
 		return Enum.ContextActionResult.Sink
 	end
@@ -856,22 +890,25 @@ end
 
 function BaseCamera:BindAction(actionName, actionFunc, createTouchButton, ...)
 	table.insert(self.boundContextActions, actionName)
-	ContextActionService:BindActionAtPriority(actionName, actionFunc, createTouchButton,
-		CAMERA_ACTION_PRIORITY, ...)
+	ContextActionService:BindActionAtPriority(actionName, actionFunc, createTouchButton, CAMERA_ACTION_PRIORITY, ...)
 end
 
 function BaseCamera:BindGamepadInputActions()
-	self:BindAction("BaseCameraGamepadPan", function(name, state, input) return self:GetGamepadPan(name, state, input) end,
-		false, Enum.KeyCode.Thumbstick2)
-	self:BindAction("BaseCameraGamepadZoom", function(name, state, input) return self:DoGamepadZoom(name, state, input) end,
-		false, Enum.KeyCode.DPadLeft, Enum.KeyCode.DPadRight, Enum.KeyCode.ButtonR3)
+	self:BindAction("BaseCameraGamepadPan", function(name, state, input)
+		return self:GetGamepadPan(name, state, input)
+	end, false, Enum.KeyCode.Thumbstick2)
+	self:BindAction("BaseCameraGamepadZoom", function(name, state, input)
+		return self:DoGamepadZoom(name, state, input)
+	end, false, Enum.KeyCode.DPadLeft, Enum.KeyCode.DPadRight, Enum.KeyCode.ButtonR3)
 end
 
 function BaseCamera:BindKeyboardInputActions()
-	self:BindAction("BaseCameraKeyboardPanArrowKeys", function(name, state, input) return self:DoKeyboardPanTurn(name, state, input) end,
-		false, Enum.KeyCode.Left, Enum.KeyCode.Right)
-	self:BindAction("BaseCameraKeyboardZoom", function(name, state, input) return self:DoKeyboardZoom(name, state, input) end,
-		false, Enum.KeyCode.I, Enum.KeyCode.O)
+	self:BindAction("BaseCameraKeyboardPanArrowKeys", function(name, state, input)
+		return self:DoKeyboardPanTurn(name, state, input)
+	end, false, Enum.KeyCode.Left, Enum.KeyCode.Right)
+	self:BindAction("BaseCameraKeyboardZoom", function(name, state, input)
+		return self:DoKeyboardZoom(name, state, input)
+	end, false, Enum.KeyCode.I, Enum.KeyCode.O)
 end
 
 local function isInDynamicThumbstickArea(input)
@@ -905,21 +942,18 @@ function BaseCamera:AdjustTouchSensitivity(delta, sensitivity)
 
 	local multiplierY = TOUCH_SENSITIVTY_ADJUST_MAX_Y
 	if currPitchAngle > TOUCH_ADJUST_AREA_UP and delta.Y < 0 then
-		local fractionAdjust = (currPitchAngle - TOUCH_ADJUST_AREA_UP)/(MAX_Y - TOUCH_ADJUST_AREA_UP)
-		fractionAdjust = 1 - (1 - fractionAdjust)^3
-		multiplierY = TOUCH_SENSITIVTY_ADJUST_MAX_Y - fractionAdjust * (
-			TOUCH_SENSITIVTY_ADJUST_MAX_Y - TOUCH_SENSITIVTY_ADJUST_MIN_Y)
+		local fractionAdjust = (currPitchAngle - TOUCH_ADJUST_AREA_UP) / (MAX_Y - TOUCH_ADJUST_AREA_UP)
+		fractionAdjust = 1 - (1 - fractionAdjust) ^ 3
+		multiplierY = TOUCH_SENSITIVTY_ADJUST_MAX_Y
+			- fractionAdjust * (TOUCH_SENSITIVTY_ADJUST_MAX_Y - TOUCH_SENSITIVTY_ADJUST_MIN_Y)
 	elseif currPitchAngle < TOUCH_ADJUST_AREA_DOWN and delta.Y > 0 then
-		local fractionAdjust = (currPitchAngle - TOUCH_ADJUST_AREA_DOWN)/(MIN_Y - TOUCH_ADJUST_AREA_DOWN)
-		fractionAdjust = 1 - (1 - fractionAdjust)^3
-		multiplierY = TOUCH_SENSITIVTY_ADJUST_MAX_Y - fractionAdjust * (
-			TOUCH_SENSITIVTY_ADJUST_MAX_Y - TOUCH_SENSITIVTY_ADJUST_MIN_Y)
+		local fractionAdjust = (currPitchAngle - TOUCH_ADJUST_AREA_DOWN) / (MIN_Y - TOUCH_ADJUST_AREA_DOWN)
+		fractionAdjust = 1 - (1 - fractionAdjust) ^ 3
+		multiplierY = TOUCH_SENSITIVTY_ADJUST_MAX_Y
+			- fractionAdjust * (TOUCH_SENSITIVTY_ADJUST_MAX_Y - TOUCH_SENSITIVTY_ADJUST_MIN_Y)
 	end
 
-	return Vector2.new(
-		sensitivity.X,
-		sensitivity.Y * multiplierY
-	)
+	return Vector2.new(sensitivity.X, sensitivity.Y * multiplierY)
 end
 
 function BaseCamera:OnTouchBegan(input, processed)
@@ -1026,7 +1060,9 @@ function BaseCamera:OnTouchEnded(input, processed)
 end
 
 function BaseCamera:OnMouse2Down(input, processed)
-	if processed then return end
+	if processed then
+		return
+	end
 
 	self.isRightMouseDown = true
 	self:OnMousePanButtonPressed(input, processed)
@@ -1038,7 +1074,9 @@ function BaseCamera:OnMouse2Up(input, processed)
 end
 
 function BaseCamera:OnMouse3Down(input, processed)
-	if processed then return end
+	if processed then
+		return
+	end
 
 	self.isMiddleMouseDown = true
 	self:OnMousePanButtonPressed(input, processed)
@@ -1057,8 +1095,11 @@ function BaseCamera:OnMouseMoved(input, processed)
 	local inputDelta = input.Delta
 	inputDelta = Vector2.new(inputDelta.X, inputDelta.Y * UserGameSettings:GetCameraYInvertValue())
 
-	if self.panEnabled and ((self.startPos and self.lastPos and self.panBeginLook) or self.inFirstPerson or self.inMouseLockedMode) then
-		local desiredXYVector = self:InputTranslationToCameraAngleChange(inputDelta,MOUSE_SENSITIVITY)
+	if
+		self.panEnabled
+		and ((self.startPos and self.lastPos and self.panBeginLook) or self.inFirstPerson or self.inMouseLockedMode)
+	then
+		local desiredXYVector = self:InputTranslationToCameraAngleChange(inputDelta, MOUSE_SENSITIVITY)
 		self.rotateInput = self.rotateInput + desiredXYVector
 	end
 
@@ -1068,7 +1109,9 @@ function BaseCamera:OnMouseMoved(input, processed)
 end
 
 function BaseCamera:OnMousePanButtonPressed(input, processed)
-	if processed then return end
+	if processed then
+		return
+	end
 	self:UpdateMouseBehavior()
 	self.panBeginLook = self.panBeginLook or self:GetCameraLookVector()
 	self.startPos = self.startPos or input.Position
@@ -1132,7 +1175,8 @@ function BaseCamera:SetCameraToSubjectDistance(desiredSubjectDistance)
 			self:EnterFirstPerson()
 		end
 	else
-		local newSubjectDistance = Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, desiredSubjectDistance)
+		local newSubjectDistance =
+			Util.Clamp(player.CameraMinZoomDistance, player.CameraMaxZoomDistance, desiredSubjectDistance)
 		if newSubjectDistance < FIRST_PERSON_DISTANCE_THRESHOLD then
 			self.currentSubjectDistance = 0.5
 			if not self.inFirstPerson then
@@ -1147,13 +1191,16 @@ function BaseCamera:SetCameraToSubjectDistance(desiredSubjectDistance)
 	end
 
 	-- Pass target distance and zoom direction to the zoom controller
-	ZoomController.SetZoomParameters(self.currentSubjectDistance, math.sign(desiredSubjectDistance - lastSubjectDistance))
+	ZoomController.SetZoomParameters(
+		self.currentSubjectDistance,
+		math.sign(desiredSubjectDistance - lastSubjectDistance)
+	)
 
 	-- Returned only for convenience to the caller to know the outcome
 	return self.currentSubjectDistance
 end
 
-function BaseCamera:SetCameraType( cameraType )
+function BaseCamera:SetCameraType(cameraType)
 	--Used by derived classes
 	self.cameraType = cameraType
 end
@@ -1163,7 +1210,7 @@ function BaseCamera:GetCameraType()
 end
 
 -- Movement mode standardized to Enum.ComputerCameraMovementMode values
-function BaseCamera:SetCameraMovementMode( cameraMovementMode )
+function BaseCamera:SetCameraMovementMode(cameraMovementMode)
 	self.cameraMovementMode = cameraMovementMode
 end
 
@@ -1228,7 +1275,9 @@ function BaseCamera:CalculateNewLookCFrame(suppliedLookVector)
 	local yTheta = Util.Clamp(-MAX_Y + currPitchAngle, -MIN_Y + currPitchAngle, self.rotateInput.y)
 	local constrainedRotateInput = Vector2.new(self.rotateInput.x, yTheta)
 	local startCFrame = CFrame.new(ZERO_VECTOR3, currLookVector)
-	local newLookCFrame = CFrame.Angles(0, -constrainedRotateInput.x, 0) * startCFrame * CFrame.Angles(-constrainedRotateInput.y,0,0)
+	local newLookCFrame = CFrame.Angles(0, -constrainedRotateInput.x, 0)
+		* startCFrame
+		* CFrame.Angles(-constrainedRotateInput.y, 0, 0)
 	return newLookCFrame
 end
 function BaseCamera:CalculateNewLookVector(suppliedLookVector)
@@ -1242,7 +1291,11 @@ function BaseCamera:CalculateNewLookVectorVR()
 	local currLookVector = (vecToSubject * X1_Y0_Z1).unit
 	local vrRotateInput = Vector2.new(self.rotateInput.x, 0)
 	local startCFrame = CFrame.new(ZERO_VECTOR3, currLookVector)
-	local yawRotatedVector = (CFrame.Angles(0, -vrRotateInput.x, 0) * startCFrame * CFrame.Angles(-vrRotateInput.y,0,0)).lookVector
+	local yawRotatedVector = (CFrame.Angles(0, -vrRotateInput.x, 0) * startCFrame * CFrame.Angles(
+		-vrRotateInput.y,
+		0,
+		0
+	)).lookVector
 	return (yawRotatedVector * X1_Y0_Z1).unit
 end
 
@@ -1299,29 +1352,37 @@ function BaseCamera:UpdateGamepad()
 				self.currentSpeed = self.vrMaxSpeed
 			else
 				local elapsedTime = (currentTime - self.lastThumbstickRotate) * 10
-				self.currentSpeed = self.currentSpeed + (self.maxSpeed * ((elapsedTime*elapsedTime)/self.numOfSeconds))
+				self.currentSpeed = self.currentSpeed
+					+ (self.maxSpeed * ((elapsedTime * elapsedTime) / self.numOfSeconds))
 
-				if self.currentSpeed > self.maxSpeed then self.currentSpeed = self.maxSpeed end
+				if self.currentSpeed > self.maxSpeed then
+					self.currentSpeed = self.maxSpeed
+				end
 
 				if self.lastVelocity then
-					local velocity = (gamepadPan - self.lastThumbstickPos)/(currentTime - self.lastThumbstickRotate)
+					local velocity = (gamepadPan - self.lastThumbstickPos) / (currentTime - self.lastThumbstickRotate)
 					local velocityDeltaMag = (velocity - self.lastVelocity).magnitude
 
 					if velocityDeltaMag > 12 then
-						self.currentSpeed = self.currentSpeed * (20/velocityDeltaMag)
-						if self.currentSpeed > self.maxSpeed then self.currentSpeed = self.maxSpeed end
+						self.currentSpeed = self.currentSpeed * (20 / velocityDeltaMag)
+						if self.currentSpeed > self.maxSpeed then
+							self.currentSpeed = self.maxSpeed
+						end
 					end
 				end
 			end
 
 			finalConstant = UserGameSettings.GamepadCameraSensitivity * self.currentSpeed
-			self.lastVelocity = (gamepadPan - self.lastThumbstickPos)/(currentTime - self.lastThumbstickRotate)
+			self.lastVelocity = (gamepadPan - self.lastThumbstickPos) / (currentTime - self.lastThumbstickRotate)
 		end
 
 		self.lastThumbstickPos = gamepadPan
 		self.lastThumbstickRotate = currentTime
 
-		return Vector2.new( gamepadPan.X * finalConstant, gamepadPan.Y * finalConstant * self.ySensitivity * UserGameSettings:GetCameraYInvertValue())
+		return Vector2.new(
+			gamepadPan.X * finalConstant,
+			gamepadPan.Y * finalConstant * self.ySensitivity * UserGameSettings:GetCameraYInvertValue()
+		)
 	end
 
 	return ZERO_VECTOR2
@@ -1346,7 +1407,8 @@ function BaseCamera:ApplyVRTransform()
 	if self.inFirstPerson and not isInVehicle then
 		local vrFrame = VRService:GetUserCFrame(Enum.UserCFrame.Head)
 		local vrRotation = vrFrame - vrFrame.p
-		rootJoint.C0 = CFrame.new(vrRotation:vectorToObjectSpace(vrFrame.p)) * CFrame.new(0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0)
+		rootJoint.C0 = CFrame.new(vrRotation:vectorToObjectSpace(vrFrame.p))
+			* CFrame.new(0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0)
 	else
 		rootJoint.C0 = CFrame.new(0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 1, 0)
 	end
@@ -1365,7 +1427,9 @@ function BaseCamera:ShouldUseVRRotation()
 		return false
 	end
 
-	local success, vrRotationIntensity = pcall(function() return StarterGui:GetCore("VRRotationIntensity") end)
+	local success, vrRotationIntensity = pcall(function()
+		return StarterGui:GetCore("VRRotationIntensity")
+	end)
 	self.VRRotationIntensityAvailable = success and vrRotationIntensity ~= nil
 	self.lastVRRotationIntensityCheckTime = tick()
 
@@ -1376,7 +1440,9 @@ end
 
 function BaseCamera:GetVRRotationInput()
 	local vrRotateSum = ZERO_VECTOR2
-	local success, vrRotationIntensity = pcall(function() return StarterGui:GetCore("VRRotationIntensity") end)
+	local success, vrRotationIntensity = pcall(function()
+		return StarterGui:GetCore("VRRotationIntensity")
+	end)
 
 	if not success then
 		return
@@ -1386,7 +1452,7 @@ function BaseCamera:GetVRRotationInput()
 	local delayExpired = (tick() - self.lastVRRotationTime) >= self:GetRepeatDelayValue(vrRotationIntensity)
 
 	if math.abs(vrGamepadRotation.x) >= self:GetActivateValue() then
-		if (delayExpired or not self.vrRotateKeyCooldown[Enum.KeyCode.Thumbstick2]) then
+		if delayExpired or not self.vrRotateKeyCooldown[Enum.KeyCode.Thumbstick2] then
 			local sign = 1
 			if vrGamepadRotation.x < 0 then
 				sign = -1
@@ -1406,7 +1472,7 @@ function BaseCamera:GetVRRotationInput()
 		self.vrRotateKeyCooldown[Enum.KeyCode.Left] = nil
 	end
 	if self.turningRight then
-		if (delayExpired or not self.vrRotateKeyCooldown[Enum.KeyCode.Right]) then
+		if delayExpired or not self.vrRotateKeyCooldown[Enum.KeyCode.Right] then
 			vrRotateSum = vrRotateSum + self:GetRotateAmountValue(vrRotationIntensity)
 			self.vrRotateKeyCooldown[Enum.KeyCode.Right] = true
 		end
@@ -1423,7 +1489,8 @@ end
 
 function BaseCamera:CancelCameraFreeze(keepConstraints)
 	if not keepConstraints then
-		self.cameraTranslationConstraints = Vector3.new(self.cameraTranslationConstraints.x, 1, self.cameraTranslationConstraints.z)
+		self.cameraTranslationConstraints =
+			Vector3.new(self.cameraTranslationConstraints.x, 1, self.cameraTranslationConstraints.z)
 	end
 	if self.cameraFrozen then
 		self.trackingHumanoid = nil
@@ -1435,7 +1502,8 @@ function BaseCamera:StartCameraFreeze(subjectPosition, humanoidToTrack)
 	if not self.cameraFrozen then
 		self.humanoidJumpOrigin = subjectPosition
 		self.trackingHumanoid = humanoidToTrack
-		self.cameraTranslationConstraints = Vector3.new(self.cameraTranslationConstraints.x, 0, self.cameraTranslationConstraints.z)
+		self.cameraTranslationConstraints =
+			Vector3.new(self.cameraTranslationConstraints.x, 0, self.cameraTranslationConstraints.z)
 		self.cameraFrozen = true
 	end
 end
@@ -1464,14 +1532,27 @@ end
 function BaseCamera:GetVRFocus(subjectPosition, timeDelta)
 	local lastFocus = self.LastCameraFocus or subjectPosition
 	if not self.cameraFrozen then
-		self.cameraTranslationConstraints = Vector3.new(self.cameraTranslationConstraints.x, math.min(1, self.cameraTranslationConstraints.y + 0.42 * timeDelta), self.cameraTranslationConstraints.z)
+		self.cameraTranslationConstraints = Vector3.new(
+			self.cameraTranslationConstraints.x,
+			math.min(1, self.cameraTranslationConstraints.y + 0.42 * timeDelta),
+			self.cameraTranslationConstraints.z
+		)
 	end
 
 	local newFocus
 	if self.cameraFrozen and self.humanoidJumpOrigin and self.humanoidJumpOrigin.y > lastFocus.y then
-		newFocus = CFrame.new(Vector3.new(subjectPosition.x, math.min(self.humanoidJumpOrigin.y, lastFocus.y + 5 * timeDelta), subjectPosition.z))
+		newFocus = CFrame.new(
+			Vector3.new(
+				subjectPosition.x,
+				math.min(self.humanoidJumpOrigin.y, lastFocus.y + 5 * timeDelta),
+				subjectPosition.z
+			)
+		)
 	else
-		newFocus = CFrame.new(Vector3.new(subjectPosition.x, lastFocus.y, subjectPosition.z):lerp(subjectPosition, self.cameraTranslationConstraints.y))
+		newFocus = CFrame.new(
+			Vector3.new(subjectPosition.x, lastFocus.y, subjectPosition.z)
+				:lerp(subjectPosition, self.cameraTranslationConstraints.y)
+		)
 	end
 
 	if self.cameraFrozen then

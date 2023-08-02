@@ -17,8 +17,8 @@ return {
 			EquippedWeapon = "",
 			FightingStyle = "Combat",
 			DemonFruit = "",
-			Bounty = 15
-		}
+			Bounty = 15,
+		},
 	},
 	["Bandit Boss"] = {
 		Damage = 15,
@@ -38,7 +38,7 @@ return {
 			EquippedWeapon = "",
 			FightingStyle = "Combat",
 			DemonFruit = "",
-			Bounty = 500
-		}
-	}
+			Bounty = 500,
+		},
+	},
 }

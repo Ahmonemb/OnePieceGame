@@ -16,7 +16,8 @@ local min = math.min
 local max = math.max
 local pi = math.pi
 
-local cameraMinZoomDistance, cameraMaxZoomDistance do
+local cameraMinZoomDistance, cameraMaxZoomDistance
+do
 	local Player = game:GetService("Players").LocalPlayer
 
 	local function updateBounds()
@@ -30,7 +31,8 @@ local cameraMinZoomDistance, cameraMaxZoomDistance do
 	Player:GetPropertyChangedSignal("CameraMaxZoomDistance"):Connect(updateBounds)
 end
 
-local ConstrainedSpring = {} do
+local ConstrainedSpring = {}
+do
 	ConstrainedSpring.__index = ConstrainedSpring
 
 	function ConstrainedSpring.new(freq, x, minValue, maxValue)
@@ -46,7 +48,7 @@ local ConstrainedSpring = {} do
 	end
 
 	function ConstrainedSpring:Step(dt)
-		local freq = self.freq*2*pi -- Convert from Hz to rad/s
+		local freq = self.freq * 2 * pi -- Convert from Hz to rad/s
 		local x = self.x
 		local v = self.v
 		local minValue = self.minValue
@@ -59,11 +61,11 @@ local ConstrainedSpring = {} do
 		-- Solve for x[t] and x'[t].
 
 		local offset = goal - x
-		local step = freq*dt
+		local step = freq * dt
 		local decay = exp(-step)
 
-		local x1 = goal + (v*dt - offset*(step + 1))*decay
-		local v1 = ((offset*freq - v)*step + v)*decay
+		local x1 = goal + (v * dt - offset * (step + 1)) * decay
+		local v1 = ((offset * freq - v) * step + v) * decay
 
 		-- Constrain
 		if x1 < minValue then
@@ -84,7 +86,7 @@ end
 local zoomSpring = ConstrainedSpring.new(ZOOM_STIFFNESS, ZOOM_DEFAULT, MIN_FOCUS_DIST, cameraMaxZoomDistance)
 
 local function stepTargetZoom(z, dz, zoomMin, zoomMax)
-	z = clamp(z + dz*(1 + z*ZOOM_ACCELERATION), zoomMin, zoomMax)
+	z = clamp(z + dz * (1 + z * ZOOM_ACCELERATION), zoomMin, zoomMax)
 	if z < DIST_OPAQUE then
 		z = dz <= 0 and zoomMin or DIST_OPAQUE
 	end
@@ -93,7 +95,8 @@ end
 
 local zoomDelta = 0
 
-local Zoom = {} do
+local Zoom = {}
+do
 	function Zoom.Update(renderDt, focus, extrapolation)
 		local poppedZoom = math.huge
 
@@ -106,7 +109,7 @@ local Zoom = {} do
 
 			-- Run the Popper algorithm on the feasible zoom range, [MIN_FOCUS_DIST, maxPossibleZoom]
 			poppedZoom = Popper(
-				focus*CFrame.new(0, 0, MIN_FOCUS_DIST),
+				focus * CFrame.new(0, 0, MIN_FOCUS_DIST),
 				maxPossibleZoom - MIN_FOCUS_DIST,
 				extrapolation
 			) + MIN_FOCUS_DIST

@@ -1,10 +1,10 @@
---/Services
-
 --/Modules
 local attackData = require(game.ReplicatedStorage.Modules.Manager.AttackData)
 local module = {}
+
+--/Remotes
 local Remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes").Misc.Stamina
---/Variables
+local RemovePlayerTag = game.ReplicatedStorage.Remotes.Misc.RemovePlayerTag
 
 --/Methods
 function module.checkStamina(Character, moduleName, skill, loop)
@@ -13,22 +13,26 @@ function module.checkStamina(Character, moduleName, skill, loop)
 	if staminaData then
 		if loop then
 			if staminaData.Stamina <= Character.States:GetAttribute("Stamina") then
-				task.wait()
-				print(Character.HumanoidRootPart:FindFirstChild("FireFlyHold"))
 				task.spawn(function()
+					task.wait(0.1)
 					while
 						staminaData.Stamina <= Character.States:GetAttribute("Stamina")
-						and Character.HumanoidRootPart:FindFirstChild("FireFlyHold")
+						and Character.HumanoidRootPart:FindFirstChild(skill .. "Hold")
 					do
 						Character.States:SetAttribute(
 							"Stamina",
 							Character.States:GetAttribute("Stamina") - staminaData.Stamina
 						)
 						task.wait(0.1)
-						print("draining")
 					end
-					if Character.HumanoidRootPart:FindFirstChild("FireFlyHold") then
-						Character.HumanoidRootPart:FindFirstChild("FireFlyHold"):Destroy()
+					if Character.HumanoidRootPart:FindFirstChild(skill .. "Hold") then
+						Character.HumanoidRootPart:FindFirstChild(skill .. "Hold"):Destroy()
+						RemovePlayerTag:FireClient(
+							game.Players:GetPlayerFromCharacter(Character),
+							"Aim",
+							skill,
+							moduleName
+						)
 					end
 				end)
 			end

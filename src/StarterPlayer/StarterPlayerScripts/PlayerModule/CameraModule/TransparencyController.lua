@@ -7,7 +7,8 @@ local MAX_TWEEN_RATE = 2.8 -- per second
 
 local Util = require(script.Parent:WaitForChild("CameraUtils"))
 
---[[ The Module ]]--
+--[[ The Module ]]
+--
 local TransparencyController = {}
 TransparencyController.__index = TransparencyController
 
@@ -27,14 +28,15 @@ function TransparencyController.new()
 	return self
 end
 
-
 function TransparencyController:HasToolAncestor(object)
-	if object.Parent == nil then return false end
-	return object.Parent:IsA('Tool') or self:HasToolAncestor(object.Parent)
+	if object.Parent == nil then
+		return false
+	end
+	return object.Parent:IsA("Tool") or self:HasToolAncestor(object.Parent)
 end
 
 function TransparencyController:IsValidPartToModify(part)
-	if part:IsA('BasePart') or part:IsA('Decal') then
+	if part:IsA("BasePart") or part:IsA("Decal") then
 		return not self:HasToolAncestor(part)
 	end
 	return false
@@ -81,25 +83,31 @@ end
 function TransparencyController:SetupTransparency(character)
 	self:TeardownTransparency()
 
-	if self.descendantAddedConn then self.descendantAddedConn:disconnect() end
+	if self.descendantAddedConn then
+		self.descendantAddedConn:disconnect()
+	end
 	self.descendantAddedConn = character.DescendantAdded:Connect(function(object)
 		-- This is a part we want to invisify
 		if self:IsValidPartToModify(object) then
 			self.cachedParts[object] = true
 			self.transparencyDirty = true
 		-- There is now a tool under the character
-		elseif object:IsA('Tool') then
-			if self.toolDescendantAddedConns[object] then self.toolDescendantAddedConns[object]:Disconnect() end
+		elseif object:IsA("Tool") then
+			if self.toolDescendantAddedConns[object] then
+				self.toolDescendantAddedConns[object]:Disconnect()
+			end
 			self.toolDescendantAddedConns[object] = object.DescendantAdded:Connect(function(toolChild)
 				self.cachedParts[toolChild] = nil
-				if toolChild:IsA('BasePart') or toolChild:IsA('Decal') then
+				if toolChild:IsA("BasePart") or toolChild:IsA("Decal") then
 					-- Reset the transparency
 					toolChild.LocalTransparencyModifier = 0
 				end
 			end)
-			if self.toolDescendantRemovingConns[object] then self.toolDescendantRemovingConns[object]:disconnect() end
+			if self.toolDescendantRemovingConns[object] then
+				self.toolDescendantRemovingConns[object]:disconnect()
+			end
 			self.toolDescendantRemovingConns[object] = object.DescendantRemoving:Connect(function(formerToolChild)
-				wait() -- wait for new parent
+				task.wait() -- wait for new parent
 				if character and formerToolChild and formerToolChild:IsDescendantOf(character) then
 					if self:IsValidPartToModify(formerToolChild) then
 						self.cachedParts[formerToolChild] = true
@@ -109,7 +117,9 @@ function TransparencyController:SetupTransparency(character)
 			end)
 		end
 	end)
-	if self.descendantRemovingConn then self.descendantRemovingConn:disconnect() end
+	if self.descendantRemovingConn then
+		self.descendantRemovingConn:disconnect()
+	end
 	self.descendantRemovingConn = character.DescendantRemoving:connect(function(object)
 		if self.cachedParts[object] then
 			self.cachedParts[object] = nil
@@ -119,7 +129,6 @@ function TransparencyController:SetupTransparency(character)
 	end)
 	self:CachePartsRecursive(character)
 end
-
 
 function TransparencyController:Enable(enable)
 	if self.enabled ~= enable then
@@ -154,7 +163,7 @@ function TransparencyController:Update()
 			instant = true
 		else
 			local distance = (currentCamera.Focus.p - currentCamera.CoordinateFrame.p).magnitude
-			transparency = (distance<2) and (1.0-(distance-0.5)/1.5) or 0 --(7 - distance) / 5
+			transparency = (distance < 2) and (1.0 - (distance - 0.5) / 1.5) or 0 --(7 - distance) / 5
 			if transparency < 0.5 then
 				transparency = 0
 			end

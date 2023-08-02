@@ -63,17 +63,14 @@ return function(isFirstPerson)
 			UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 			GameSettings.RotationType = Enum.RotationType.CameraRelative
 		end
-
 	elseif Input.getTogglePan() then
 		Mouse.Icon = CROSS_MOUSE_ICON
 		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
 		GameSettings.RotationType = Enum.RotationType.MovementRelative
-
 	elseif Input.getHoldPan() then
 		Mouse.Icon = ""
 		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
 		GameSettings.RotationType = Enum.RotationType.MovementRelative
-
 	else
 		Mouse.Icon = ""
 		UserInputService.MouseBehavior = Enum.MouseBehavior.Default

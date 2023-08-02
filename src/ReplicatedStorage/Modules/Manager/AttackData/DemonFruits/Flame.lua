@@ -1,34 +1,34 @@
 return {
 	["Logia"] = {
-		value = true
+		value = true,
 	},
 	["FireFist"] = {
 		cooldown = 5,
 		baseDamage = 15,
 		Stamina = 10,
 		Key = "Z",
-		Mastery = 1
+		Mastery = 1,
 	},
 	["FirePillar"] = {
 		cooldown = 10,
 		baseDamage = 5,
 		Stamina = 15,
 		Key = "X",
-		Mastery = 15
+		Mastery = 15,
 	},
 	["FireFlight"] = {
 		cooldown = 7,
 		baseDamage = 7,
 		Stamina = 20,
 		Key = "C",
-		Mastery = 30
+		Mastery = 30,
 	},
 	["FireFlies"] = {
-		cooldown = 1,
+		cooldown = 15,
 		baseDamage = 5,
 		Stamina = 5,
 		Key = "V",
-		Mastery = 60
+		Mastery = 60,
 	},
-	MaxMastery = 120
+	MaxMastery = 120,
 }

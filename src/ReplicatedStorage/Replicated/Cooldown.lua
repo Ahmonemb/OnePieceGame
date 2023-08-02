@@ -2,13 +2,13 @@ local Cooldown = {}
 
 local Cooldowns = {}
 
-function Cooldown:AddCooldown(Name, Length, Player)
-	Cooldowns[Name] = {Active = true}
+function Cooldown:AddCooldown(Name, Length)
+	Cooldowns[Name] = { Active = true }
 	if not Cooldowns[Name]["Time"] then
 		Cooldowns[Name]["Time"] = 0
 	end
 	Cooldowns[Name]["Time"] += 1
-	
+
 	local Ver = Cooldowns[Name]["Time"]
 	task.delay(Length, function()
 		if Cooldowns[Name] and Cooldowns[Name]["Time"] == Ver then
@@ -17,7 +17,7 @@ function Cooldown:AddCooldown(Name, Length, Player)
 	end)
 end
 
-function Cooldown:CheckCooldown(Name, Player)
+function Cooldown:CheckCooldown(Name)
 	if Cooldowns[Name] then
 		return true
 	else

@@ -29,7 +29,7 @@ local function resetCollisionGroup(object)
 		return
 	end
 
-	local previousCollisionGroupName = previousCollisionGroupId.CollisionGroup.Name
+	local previousCollisionGroupName = object.CollisionGroup
 	if not previousCollisionGroupName then
 		return
 	end

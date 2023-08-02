@@ -1,6 +1,6 @@
 return {
 	["Logia"] = {
-		value = true
+		value = true,
 	},
 	["Melee"] = {
 		baseDamage = 7,
@@ -13,28 +13,28 @@ return {
 		cooldown = 4,
 		Stamina = 15,
 		Key = "Z",
-		Mastery = 1
+		Mastery = 1,
 	},
 	["LightMirror"] = {
 		baseDamage = 15,
 		cooldown = 6,
 		Stamina = 20,
 		Key = "X",
-		Mastery = 15
+		Mastery = 15,
 	},
 	["LightFlight"] = {
 		baseDamage = 15,
 		cooldown = 8,
 		Stamina = 25,
 		Key = "C",
-		Mastery = 35
+		Mastery = 35,
 	},
 	["LightJewels"] = {
 		baseDamage = 15,
 		cooldown = 15,
-		Stamina = 30,
+		Stamina = 5,
 		Key = "V",
-		Mastery = 60
+		Mastery = 60,
 	},
-	MaxMastery = 200
+	MaxMastery = 200,
 }
